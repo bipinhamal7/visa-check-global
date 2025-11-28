@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visa Check Global</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #0f172a;
+            --background-color: #f8fafc;
+        }
+        body { font-family: 'Inter', sans-serif; background-color: var(--background-color); }
+        .header-gradient { background: linear-gradient(135deg, #0f172a 0%, #1e40af 100%); }
+        .scrollable-content::-webkit-scrollbar { width: 4px; }
+        .scrollable-content::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.2); border-radius: 2px; }
+        .modal { transition: opacity 0.2s ease, visibility 0.2s ease; }
+        .modal.hidden { opacity: 0; visibility: hidden; }
+        .modal-content { transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        .modal.hidden .modal-content { transform: translateY(100%); }
+    </style>
+</head>
+<body class="min-h-screen antialiased text-gray-800">
+
+    <div class="max-w-md mx-auto h-screen flex flex-col bg-white shadow-2xl overflow-hidden relative">
+
+        <header class="header-gradient p-6 pb-8 rounded-b-[2.5rem] shadow-lg z-10">
+            <div class="flex justify-between items-center text-white mb-4">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center mr-3 backdrop-blur-md">
+                        <i class="fas fa-passport text-lg"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-extrabold tracking-tight" id="ui-title">Visa Check</h1>
+                        <p class="text-[10px] text-blue-200 font-medium tracking-widest uppercase">Global Portal</p>
+                    </div>
+                </div>
+                <div class="flex space-x-2">
+                    <button onclick="openLanguageModal()" class="flex items-center bg-white/10 hover:bg-white/20 backdrop-blur-md px-3 py-1.5 rounded-full transition border border-white/20">
+                        <i class="fas fa-language text-lg mr-1.5"></i>
+                        <span class="text-xs font-bold" id="ui-lang-btn">EN</span>
+                    </button>
+                    <button onclick="openInfoModal()" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition">
+                        <i class="fas fa-info text-sm"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="mt-2 relative group">
+                <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                <input type="text" id="country-search" placeholder="Search country..." 
+                    class="w-full pl-11 pr-4 py-3.5 rounded-2xl border-none ring-2 ring-transparent focus:ring-blue-400 shadow-xl bg-white text-gray-800 placeholder-gray-400 font-medium transition-all text-sm">
+            </div>
+        </header>
+
+        <main class="flex-grow p-4 scrollable-content overflow-y-auto -mt-4 z-0 pt-6">
+            <div id="country-list-container" class="space-y-3 pb-20"></div>
+        </main>
+
+        <footer class="bg-white border-t border-gray-100 p-4 text-center text-xs z-10 text-gray-400">
+            <p id="ui-footer-note">Official Government Links</p>
+            <p class="font-bold text-slate-900 mt-1">Visa Check Global © 2025</p>
+        </footer>
+    </div>
+
+    <div id="link-modal" class="modal hidden fixed inset-0 z-50 bg-slate-900/60 flex items-end justify-center backdrop-blur-sm">
+        <div class="modal-content w-full max-w-md bg-white rounded-t-[2rem] shadow-2xl max-h-[80vh] flex flex-col">
+            <div class="p-6 border-b border-gray-50 flex justify-between items-center">
+                <h3 id="modal-country-name" class="text-xl font-bold text-slate-800 flex items-center">
+                    <span id="modal-flag" class="mr-3 text-3xl"></span>
+                    <span id="modal-title-text">Country</span>
+                </h3>
+                <button onclick="closeModal()" class="w-8 h-8 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center hover:bg-gray-200 transition"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="modal-links-container" class="p-6 overflow-y-auto space-y-3 bg-gray-50/50"></div>
+            <div class="p-4 bg-white text-center text-xs text-gray-400 rounded-b-[2rem]" id="ui-modal-footer">Links open in a new browser tab.</div>
+        </div>
+    </div>
+
+    <div id="language-modal" class="modal hidden fixed inset-0 z-[60] bg-slate-900/60 flex items-end justify-center backdrop-blur-sm">
+        <div class="modal-content w-full max-w-md bg-white h-[85vh] rounded-t-[2rem] shadow-2xl flex flex-col">
+            <div class="p-6 border-b border-gray-50">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold text-slate-800" id="ui-select-lang">Select Language</h3>
+                    <button onclick="closeLanguageModal()" class="w-8 h-8 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center hover:bg-gray-200 transition"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="relative">
+                    <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" id="language-search" placeholder="Search language..." class="w-full pl-10 pr-4 py-2 rounded-xl border border-gray-200 bg-gray-50 text-sm">
+                </div>
+            </div>
+            <div id="language-list-container" class="flex-grow overflow-y-auto p-4 scrollable-content bg-gray-50/50 space-y-2"></div>
+        </div>
+    </div>
+
+    <div id="info-modal" class="hidden fixed inset-0 z-50 bg-slate-900/80 flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl text-center">
+            <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6 text-3xl shadow-sm"><i class="fas fa-passport"></i></div>
+            <h2 class="text-xl font-bold text-gray-900 mb-2">Visa Check Global</h2>
+            <p class="text-sm text-gray-500 mb-6">110+ Countries. Native Translation.</p>
+            <div class="bg-slate-50 p-4 rounded-xl text-left text-sm text-slate-700 mb-6 border border-slate-100">
+                <p class="font-bold mb-1 text-slate-900">Developer Contact</p>
+                <p>Bipin Hamal</p>
+            </div>
+            <button onclick="document.getElementById('info-modal').classList.add('hidden')" class="w-full py-3.5 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 transition">Close</button>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. GLOBAL STATE ---
+        let currentLang = 'en';
+
+        // --- 2. DICTIONARY (For UI & Smart Link Replacement) ---
+        const uiDictionary = {
+            'en': { title: 'Visa Check', search: 'Search country...', links: 'Links', footer: 'Official Government Links Only', modalFooter: 'Opens in new tab', selectLang: 'Select Language' },
+            'ne': { title: 'भिसा चेक', search: 'देश खोज्नुहोस्...', links: 'लिंकहरू', footer: 'सरकारी लिंक मात्र', modalFooter: 'नयाँ ट्याबमा खुल्छ', selectLang: 'भाषा छान्नुहोस्', replace: { 'Visa': 'भिसा', 'Status': 'स्थिति', 'Check': 'जाँच', 'Track': 'ट्र्याक' } },
+            'hi': { title: 'वीज़ा चेक', search: 'देश खोजें...', links: 'लिंक', footer: 'केवल सरकारी लिंक', modalFooter: 'नए टैब में खुलता है', selectLang: 'भाषा चुनें', replace: { 'Visa': 'वीज़ा', 'Status': 'स्थिति', 'Check': 'जाँच', 'Track': 'ट्रैक' } },
+            'ko': { title: '비자 확인', search: '국가 검색...', links: '링크', footer: '공식 정부 링크', modalFooter: '새 탭에서 열림', selectLang: '언어 선택', replace: { 'Visa': '비자', 'Status': '상태', 'Check': '확인', 'Track': '추적' } },
+            'ja': { title: 'ビザ確認', search: '国を検索...', links: 'リンク', footer: '公式リンク', modalFooter: '新しいタブで開く', selectLang: '言語を選択', replace: { 'Visa': 'ビザ', 'Status': 'ステータス', 'Check': '確認', 'Track': '追跡' } },
+            'es': { title: 'Verificar Visa', search: 'Buscar país...', links: 'Enlaces', footer: 'Enlaces oficiales', modalFooter: 'Abre en nueva pestaña', selectLang: 'Elegir idioma', replace: { 'Visa': 'Visa', 'Status': 'Estado', 'Check': 'Verificar', 'Track': 'Rastrear' } },
+            'ar': { title: 'فحص التأشيرة', search: 'ابحث عن بلد...', links: 'روابط', footer: 'روابط رسمية فقط', modalFooter: 'يفتح في علامة تبويب جديدة', selectLang: 'اختر اللغة', replace: { 'Visa': 'تأشيرة', 'Status': 'حالة', 'Check': 'فحص', 'Track': 'تتبع' } }
+        };
+
+        // --- 3. HELPER: GET FLAG EMOJI FROM COUNTRY CODE ---
+        function getFlagEmoji(countryCode) {
+            const codePoints = countryCode
+                .toUpperCase()
+                .split('')
+                .map(char =>  127397 + char.charCodeAt());
+            return String.fromCodePoint(...codePoints);
+        }
+
+        // --- 4. HELPER: GET TRANSLATED COUNTRY NAME (BROWSER API) ---
+        function getCountryName(code) {
+            try {
+                const regionNames = new Intl.DisplayNames([currentLang], {type: 'region'});
+                return regionNames.of(code);
+            } catch (e) { return code; }
+        }
+
+        // --- 5. HELPER: TRANSLATE LINK TEXT ---
+        function translateLink(text) {
+            if (!uiDictionary[currentLang] || !uiDictionary[currentLang].replace) return text;
+            const map = uiDictionary[currentLang].replace;
+            let newText = text;
+            for (const [key, val] of Object.entries(map)) {
+                newText = newText.replace(key, val);
+            }
+            return newText;
+        }
+
+        // --- 6. DATA: 110+ COUNTRIES (ISO Code + Links) ---
+        const visaCountries = [
+            {code: 'KR', links: [{name: "Visa Status Check", url: "https://www.visa.go.kr/"}, {name: "K-ETA Check", url: "https://www.k-eta.go.kr/"}]},
+            {code: 'NP', links: [{name: "Visa Application Status", url: "https://www.immigration.gov.np/"}]},
+            {code: 'IN', links: [{name: "e-Visa Status", url: "https://indianvisaonline.gov.in/"}]},
+            {code: 'JP', links: [{name: "e-Visa Status", url: "https://www.evisa.mofa.go.jp/"}]},
+            {code: 'US', links: [{name: "Visa Status Check", url: "https://ceac.state.gov/"}]},
+            {code: 'GB', links: [{name: "Check Visa Status", url: "https://www.gov.uk/check-uk-visa"}]},
+            {code: 'AE', links: [{name: "Visa Status Check", url: "https://smartservices.icp.gov.ae/"}]},
+            {code: 'SA', links: [{name: "Visa Validity Check", url: "https://muqeem.sa/"}]},
+            {code: 'QA', links: [{name: "Visa Inquiry", url: "https://portal.moi.gov.qa/"}]},
+            {code: 'MY', links: [{name: "Visa Check", url: "https://malaysiavisa.imi.gov.my/"}]},
+            {code: 'AU', links: [{name: "VEVO Check", url: "https://online.immi.gov.au/"}]},
+            {code: 'CA', links: [{name: "Visa Status", url: "https://www.canada.ca/"}]},
+            {code: 'CN', links: [{name: "Visa Status", url: "https://www.visaforchina.cn/"}]},
+            {code: 'TH', links: [{name: "Visa Status", url: "https://thaievisa.go.th/"}]},
+            {code: 'VN', links: [{name: "e-Visa Check", url: "https://evisa.gov.vn/"}]},
+            {code: 'ID', links: [{name: "Visa Check", url: "https://evisa.imigrasi.go.id/"}]},
+            {code: 'PH', links: [{name: "Visa Status", url: "https://www.visa.gov.ph/"}]},
+            {code: 'KW', links: [{name: "Visa Status", url: "https://rnt.moi.gov.kw/"}]},
+            {code: 'OM', links: [{name: "Track Visa", url: "https://evisa.rop.gov.om/"}]},
+            {code: 'BH', links: [{name: "Visa Status", url: "https://www.evisa.gov.bh/"}]},
+            {code: 'TR', links: [{name: "e-Visa Check", url: "https://www.evisa.gov.tr/"}]},
+            {code: 'IL', links: [{name: "Visa Status", url: "https://www.gov.il/"}]},
+            {code: 'NZ', links: [{name: "Visa Check", url: "https://www.immigration.govt.nz/"}]},
+            {code: 'SG', links: [{name: "Visa Status", url: "https://eservices.ica.gov.sg/"}]},
+            {code: 'LK', links: [{name: "ETA Status", url: "https://eta.gov.lk/"}]},
+            {code: 'PK', links: [{name: "Visa Tracking", url: "https://visa.nadra.gov.pk/"}]},
+            {code: 'BD', links: [{name: "Visa Status", url: "https://www.visa.gov.bd/"}]},
+            {code: 'KH', links: [{name: "e-Visa Check", url: "https://www.evisa.gov.kh/"}]},
+            {code: 'LA', links: [{name: "e-Visa Check", url: "https://laoevisa.gov.la/"}]},
+            {code: 'MM', links: [{name: "e-Visa Status", url: "https://evisa.moip.gov.mm/"}]},
+            {code: 'MV', links: [{name: "Work Permit Check", url: "https://xpat.egov.mv/"}]},
+            {code: 'TW', links: [{name: "Visa Inquiry", url: "https://visawebapp.boca.gov.tw/"}]},
+            {code: 'HK', links: [{name: "App Status", url: "https://www.gov.hk/"}]},
+            {code: 'FR', links: [{name: "Track App", url: "https://france-visas.gouv.fr/"}]},
+            {code: 'DE', links: [{name: "Visa Status", url: "https://videx.diplo.de/"}]},
+            {code: 'IT', links: [{name: "Visa Status", url: "https://vistoperitalia.esteri.it/"}]},
+            {code: 'ES', links: [{name: "Visa Status", url: "https://sede.administracionespublicas.gob.es/"}]},
+            {code: 'PT', links: [{name: "Visa Status", url: "https://aima.gov.pt/"}]},
+            {code: 'PL', links: [{name: "Visa Status", url: "https://www.gov.pl/"}]},
+            {code: 'NL', links: [{name: "Visa Tracker", url: "https://www.netherlandsworldwide.nl/"}]},
+            {code: 'RU', links: [{name: "e-Visa Check", url: "https://evisa.kdmid.ru/"}]},
+            {code: 'BR', links: [{name: "Visa Check", url: "https://formulario-mre.serpro.gov.br/"}]},
+            {code: 'MX', links: [{name: "Visa Status", url: "https://www.inm.gob.mx/"}]},
+            {code: 'ZA', links: [{name: "Visa Tracking", url: "https://visa.vfsglobal.com/"}]},
+            {code: 'EG', links: [{name: "e-Visa Check", url: "https://www.visa2egypt.gov.eg/"}]},
+            {code: 'NG', links: [{name: "Visa Status", url: "https://portal.immigration.gov.ng/"}]},
+            {code: 'KE', links: [{name: "eTA Status", url: "https://www.etakenya.go.ke/"}]},
+            {code: 'ET', links: [{name: "e-Visa Check", url: "https://www.evisa.gov.et/"}]},
+            {code: 'SE', links: [{name: "Visa Check", url: "https://www.migrationsverket.se/"}]},
+            {code: 'CH', links: [{name: "Visa Check", url: "https://www.sem.admin.ch/"}]},
+            {code: 'NO', links: [{name: "Visa Check", url: "https://www.udi.no/"}]},
+            {code: 'FI', links: [{name: "Visa Check", url: "https://enterfinland.fi/"}]},
+            {code: 'DK', links: [{name: "Visa Check", url: "https://www.nyidanmark.dk/"}]},
+            {code: 'IE', links: [{name: "Visa Check", url: "https://www.irishimmigration.ie/"}]},
+            {code: 'AL', links: [{name: "e-Visa Check", url: "https://e-visa.al/"}]},
+            {code: 'AM', links: [{name: "e-Visa Check", url: "https://evisa.mfa.am/"}]},
+            {code: 'AT', links: [{name: "Visa Info", url: "https://www.bmeia.gv.at/"}]},
+            {code: 'AZ', links: [{name: "e-Visa Check", url: "https://evisa.gov.az/"}]},
+            {code: 'BS', links: [{name: "Visa Check", url: "https://www.immigration.gov.bs/"}]},
+            {code: 'BB', links: [{name: "Visa Check", url: "https://immigration.gov.bb/"}]},
+            {code: 'BE', links: [{name: "Visa Check", url: "https://visaonweb.diplomatie.be/"}]},
+            {code: 'BZ', links: [{name: "Visa Check", url: "https://immigration.gov.bz/"}]},
+            {code: 'BJ', links: [{name: "e-Visa Check", url: "https://evisa.gouv.bj/"}]},
+            {code: 'BT', links: [{name: "Visa Check", url: "https://www.doi.gov.bt/"}]},
+            {code: 'BO', links: [{name: "Visa Check", url: "http://sistemas.migracion.gob.bo/"}]},
+            {code: 'BW', links: [{name: "e-Visa Check", url: "https://evisa.gov.bw/"}]},
+            {code: 'CM', links: [{name: "e-Visa Check", url: "https://www.evisacam.cm/"}]},
+            {code: 'CL', links: [{name: "Visa Status", url: "https://tramites.extranjeria.gob.cl/"}]},
+            {code: 'CO', links: [{name: "Visa Status", url: "https://apps.migracioncolombia.gov.co/"}]},
+            {code: 'CR', links: [{name: "Visa Status", url: "https://migracion.go.cr/"}]},
+            {code: 'HR', links: [{name: "Visa Status", url: "https://mvep.gov.hr/"}]},
+            {code: 'CY', links: [{name: "Visa Status", url: "http://www.mfa.gov.cy/"}]},
+            {code: 'CZ', links: [{name: "Visa Status", url: "https://frs.gov.cz/"}]},
+            {code: 'DJ', links: [{name: "e-Visa Check", url: "https://www.evisa.gouv.dj/"}]},
+            {code: 'DO', links: [{name: "Visa Status", url: "https://eticket.migracion.gob.do/"}]},
+            {code: 'EC', links: [{name: "Visa Status", url: "https://www.consuladovirtual.gob.ec/"}]},
+            {code: 'SV', links: [{name: "Visa Status", url: "https://www.migracion.gob.sv/"}]},
+            {code: 'EE', links: [{name: "Visa Status", url: "https://vm.ee/"}]},
+            {code: 'FJ', links: [{name: "Visa Status", url: "http://www.immigration.gov.fj/"}]},
+            {code: 'GA', links: [{name: "e-Visa Check", url: "https://evisa.dgdi.ga/"}]},
+            {code: 'GE', links: [{name: "e-Visa Check", url: "https://www.evisa.gov.ge/"}]},
+            {code: 'GH', links: [{name: "Visa Status", url: "https://home.gis.gov.gh/"}]},
+            {code: 'GR', links: [{name: "Visa Status", url: "https://www.mfa.gr/"}]},
+            {code: 'GN', links: [{name: "e-Visa Check", url: "https://www.paf.gov.gn/"}]},
+            {code: 'HU', links: [{name: "Visa Status", url: "http://oif.gov.hu/"}]},
+            {code: 'IR', links: [{name: "e-Visa Check", url: "https://evisa.mfa.ir/"}]},
+            {code: 'CI', links: [{name: "e-Visa Check", url: "https://snedai.com/"}]},
+            {code: 'JM', links: [{name: "Visa Status", url: "https://www.pica.gov.jm/"}]},
+            {code: 'JO', links: [{name: "Visa Status", url: "https://eservices.moi.gov.jo/"}]},
+            {code: 'KZ', links: [{name: "Visa Status", url: "https://www.vmp.gov.kz/"}]},
+            {code: 'KG', links: [{name: "e-Visa Check", url: "https://www.evisa.e-gov.kg/"}]},
+            {code: 'LV', links: [{name: "Visa Status", url: "https://www.pmlp.gov.lv/"}]},
+            {code: 'LB', links: [{name: "Visa Status", url: "https://www.general-security.gov.lb/"}]},
+            {code: 'LT', links: [{name: "Visa Status", url: "https://www.migracija.lt/"}]},
+            {code: 'MG', links: [{name: "e-Visa Check", url: "https://evisamada.gov.mg/"}]},
+            {code: 'MW', links: [{name: "e-Visa Check", url: "https://www.evisa.gov.mw/"}]},
+            {code: 'MT', links: [{name: "Visa Status", url: "https://identita.gov.mt/"}]},
+            {code: 'MD', links: [{name: "e-Visa Check", url: "https://evisa.gov.md/"}]},
+            {code: 'MN', links: [{name: "e-Visa Check", url: "https://www.evisa.mn/"}]},
+            {code: 'MA', links: [{name: "Visa Status", url: "https://www.acces-maroc.ma/"}]},
+            {code: 'MZ', links: [{name: "e-Visa Check", url: "https://evisa.gov.mz/"}]},
+            {code: 'PA', links: [{name: "Visa Status", url: "https://www.migracion.gob.pa/"}]},
+            {code: 'PG', links: [{name: "e-Visa Check", url: "https://evisa.ica.gov.pg/"}]},
+            {code: 'PY', links: [{name: "Visa Status", url: "https://www.migraciones.gov.py/"}]},
+            {code: 'PE', links: [{name: "Visa Status", url: "https://www.migraciones.gob.pe/"}]},
+            {code: 'RO', links: [{name: "e-Visa Check", url: "http://evisa.mae.ro/"}]},
+            {code: 'RW', links: [{name: "Visa Status", url: "https://irembo.gov.rw/"}]},
+            {code: 'RS', links: [{name: "Visa Status", url: "https://www.mfa.gov.rs/"}]},
+            {code: 'SK', links: [{name: "Visa Status", url: "https://mzv.sk/"}]},
+            {code: 'SI', links: [{name: "Visa Status", url: "https://www.gov.si/"}]},
+            {code: 'SR', links: [{name: "e-Visa Check", url: "https://suriname.vfsevisa.com/"}]},
+            {code: 'TJ', links: [{name: "e-Visa Check", url: "https://www.evisa.tj/"}]},
+            {code: 'TZ', links: [{name: "e-Visa Status", url: "https://eservices.immigration.go.tz/"}]},
+            {code: 'TN', links: [{name: "e-Visa Check", url: "https://visas.interieur.gov.tn/"}]},
+            {code: 'UG', links: [{name: "Visa Status", url: "https://visas.immigration.go.ug/"}]},
+            {code: 'UA', links: [{name: "Visa Status", url: "https://mfa.gov.ua/"}]},
+            {code: 'UY', links: [{name: "Visa Status", url: "https://www.gub.uy/"}]},
+            {code: 'UZ', links: [{name: "e-Visa Status", url: "https://e-visa.gov.uz/"}]},
+            {code: 'ZM', links: [{name: "e-Visa Check", url: "https://eservices.zambiaimmigration.gov.zm/"}]},
+            {code: 'ZW', links: [{name: "e-Visa Check", url: "https://www.evisa.gov.zw/"}]},
+            {code: 'AO', links: [{name: "Visa Check", url: "http://www.smevisa.gov.ao/"}]}
+        ];
+
+        // --- 7. LANGUAGE LIST (110+) ---
+        const languageList = [
+            {code:'en',name:'English'},{code:'ne',name:'Nepali (नेपाली)'},{code:'hi',name:'Hindi (हिन्दी)'},{code:'ko',name:'Korean (한국어)'},{code:'zh',name:'Chinese (中文)'},
+            {code:'ar',name:'Arabic (العربية)'},{code:'es',name:'Spanish'},{code:'fr',name:'French'},{code:'ru',name:'Russian'},{code:'ja',name:'Japanese'},
+            {code:'pt',name:'Portuguese'},{code:'de',name:'German'},{code:'it',name:'Italian'},{code:'tr',name:'Turkish'},{code:'id',name:'Indonesian'},
+            {code:'ms',name:'Malay'},{code:'th',name:'Thai'},{code:'vi',name:'Vietnamese'},{code:'bn',name:'Bengali'},{code:'ur',name:'Urdu'},
+            {code:'fa',name:'Persian'},{code:'pl',name:'Polish'},{code:'uk',name:'Ukrainian'},{code:'nl',name:'Dutch'},{code:'sv',name:'Swedish'},
+            {code:'fi',name:'Finnish'},{code:'da',name:'Danish'},{code:'no',name:'Norwegian'},{code:'cs',name:'Czech'},{code:'el',name:'Greek'},
+            {code:'he',name:'Hebrew'},{code:'sw',name:'Swahili'},{code:'tl',name:'Filipino'},{code:'ro',name:'Romanian'},{code:'hu',name:'Hungarian'},
+            {code:'af',name:'Afrikaans'},{code:'sq',name:'Albanian'},{code:'am',name:'Amharic'},{code:'hy',name:'Armenian'},{code:'az',name:'Azerbaijani'},
+            {code:'eu',name:'Basque'},{code:'be',name:'Belarusian'},{code:'bs',name:'Bosnian'},{code:'bg',name:'Bulgarian'},{code:'ca',name:'Catalan'},
+            {code:'hr',name:'Croatian'},{code:'et',name:'Estonian'},{code:'gl',name:'Galician'},{code:'ka',name:'Georgian'},{code:'is',name:'Icelandic'},
+            {code:'ga',name:'Irish'},{code:'kn',name:'Kannada'},{code:'kk',name:'Kazakh'},{code:'km',name:'Khmer'},{code:'lo',name:'Lao'},
+            {code:'lv',name:'Latvian'},{code:'lt',name:'Lithuanian'},{code:'mk',name:'Macedonian'},{code:'mg',name:'Malagasy'},{code:'ml',name:'Malayalam'},
+            {code:'mt',name:'Maltese'},{code:'mr',name:'Marathi'},{code:'mn',name:'Mongolian'},{code:'my',name:'Burmese'},{code:'ps',name:'Pashto'},
+            {code:'pa',name:'Punjabi'},{code:'sr',name:'Serbian'},{code:'sk',name:'Slovak'},{code:'sl',name:'Slovenian'},{code:'so',name:'Somali'},
+            {code:'su',name:'Sundanese'},{code:'tg',name:'Tajik'},{code:'ta',name:'Tamil'},{code:'te',name:'Telugu'},{code:'uz',name:'Uzbek'},
+            {code:'cy',name:'Welsh'},{code:'zu',name:'Zulu'}
+        ];
+
+        // --- 8. DOM ELEMENTS ---
+        const countryListEl = document.getElementById('country-list-container');
+        const searchInput = document.getElementById('country-search');
+        const linkModalEl = document.getElementById('link-modal');
+        const linkModalLinks = document.getElementById('modal-links-container');
+        const linkModalTitle = document.getElementById('modal-title-text');
+        const linkModalFlag = document.getElementById('modal-flag');
+        const langModalEl = document.getElementById('language-modal');
+        const langListEl = document.getElementById('language-list-container');
+        const langSearchInput = document.getElementById('language-search');
+
+        // --- 9. RENDER LOGIC ---
+        function updateUI() {
+            const content = uiDictionary[currentLang] || uiDictionary['en'];
+            document.getElementById('ui-title').innerText = content.title;
+            document.getElementById('ui-lang-btn').innerText = currentLang.toUpperCase().substring(0, 2);
+            document.getElementById('country-search').placeholder = content.search;
+            document.getElementById('ui-footer-note').innerText = content.footer;
+            document.getElementById('ui-select-lang').innerText = content.selectLang;
+            document.getElementById('ui-modal-footer').innerText = content.modalFooter;
+            renderList(searchInput.value);
+        }
+
+        function renderList(filter = "") {
+            const term = filter.toLowerCase();
+            const content = uiDictionary[currentLang] || uiDictionary['en'];
+            
+            const processed = visaCountries.map(c => {
+                return { ...c, displayName: getCountryName(c.code) || c.name, displayFlag: getFlagEmoji(c.code) };
+            }).sort((a, b) => a.displayName.localeCompare(b.displayName));
+
+            const filtered = processed.filter(c => c.displayName.toLowerCase().includes(term));
+
+            if (filtered.length === 0) {
+                countryListEl.innerHTML = `<div class="text-center p-10 text-gray-400">No results</div>`;
+                return;
+            }
+
+            countryListEl.innerHTML = filtered.map(c => `
+                <div onclick="openLinkModal('${c.code}')" class="group bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between cursor-pointer hover:shadow-lg transition">
+                    <div class="flex items-center">
+                        <span class="text-3xl mr-4">${c.displayFlag}</span>
+                        <div>
+                            <h3 class="font-bold text-slate-800">${c.displayName}</h3>
+                            <p class="text-xs text-gray-400">${c.links.length} ${content.links}</p>
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-right text-gray-300"></i>
+                </div>
+            `).join('');
+        }
+
+        function openLinkModal(code) {
+            const c = visaCountries.find(x => x.code === code);
+            const flag = getFlagEmoji(c.code);
+            const name = getCountryName(c.code);
+            
+            linkModalFlag.innerText = flag;
+            linkModalTitle.innerText = name;
+            
+            linkModalLinks.innerHTML = c.links.map(l => `
+                <a href="${l.url}" target="_blank" class="block w-full p-4 bg-white rounded-xl border border-gray-100 flex justify-between hover:border-blue-300 hover:shadow-md transition">
+                    <span class="font-bold text-sm text-gray-700">${translateLink(l.name)}</span>
+                    <i class="fas fa-external-link-alt text-gray-400"></i>
+                </a>
+            `).join('');
+            linkModalEl.classList.remove('hidden');
+        }
+
+        function renderLanguageList(filter = "") {
+            const term = filter.toLowerCase();
+            const filtered = languageList.filter(l => l.name.toLowerCase().includes(term));
+            langListEl.innerHTML = filtered.map(l => `
+                <button onclick="setLanguage('${l.code}')" class="w-full text-left px-5 py-3 rounded-xl flex justify-between ${currentLang === l.code ? 'bg-blue-50 text-blue-600 font-bold' : 'bg-white text-gray-600'}">
+                    ${l.name}
+                </button>
+            `).join('');
+        }
+
+        function setLanguage(code) { currentLang = code; langModalEl.classList.add('hidden'); updateUI(); }
+        function closeModal() { linkModalEl.classList.add('hidden'); }
+        function openLanguageModal() { renderLanguageList(); langModalEl.classList.remove('hidden'); }
+        function closeLanguageModal() { langModalEl.classList.add('hidden'); }
+        function openInfoModal() { document.getElementById('info-modal').classList.remove('hidden'); }
+
+        // Events
+        searchInput.addEventListener('input', (e) => renderList(e.target.value));
+        langSearchInput.addEventListener('input', (e) => renderLanguageList(e.target.value));
+        linkModalEl.addEventListener('click', (e) => { if(e.target === linkModalEl) closeModal(); });
+        
+        updateUI();
+    </script>
+</body>
+</html>
