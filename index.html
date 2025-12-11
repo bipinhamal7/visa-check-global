@@ -41,10 +41,7 @@
                         <i class="fas fa-language text-lg mr-1.5"></i>
                         <span class="text-xs font-bold" id="ui-lang-btn">EN</span>
                     </button>
-                    <button onclick="openInfoModal()" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition">
-                        <i class="fas fa-info text-sm"></i>
-                    </button>
-                </div>
+                    </div>
             </div>
             
             <div class="mt-2 relative group">
@@ -60,7 +57,7 @@
 
         <footer class="bg-white border-t border-gray-100 p-4 text-center text-xs z-10 text-gray-400">
             <p id="ui-footer-note">Official Government Links</p>
-            <p class="font-bold text-slate-900 mt-1">Visa Check Global © 2025</p>
+            <p class="font-bold text-slate-900 mt-1">C bipinhamal 2025</p>
         </footer>
     </div>
 
@@ -94,26 +91,13 @@
         </div>
     </div>
 
-    <div id="info-modal" class="hidden fixed inset-0 z-50 bg-slate-900/80 flex items-center justify-center p-4 backdrop-blur-sm">
-        <div class="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl text-center">
-            <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6 text-3xl shadow-sm"><i class="fas fa-passport"></i></div>
-            <h2 class="text-xl font-bold text-gray-900 mb-2">Visa Check Global</h2>
-            <p class="text-sm text-gray-500 mb-6">110+ Countries. Native Translation.</p>
-            <div class="bg-slate-50 p-4 rounded-xl text-left text-sm text-slate-700 mb-6 border border-slate-100">
-                <p class="font-bold mb-1 text-slate-900">Developer Contact</p>
-                <p>Bipin Hamal</p>
-            </div>
-            <button onclick="document.getElementById('info-modal').classList.add('hidden')" class="w-full py-3.5 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 transition">Close</button>
-        </div>
-    </div>
-
     <script>
         // --- 1. GLOBAL STATE ---
         let currentLang = 'en';
 
         // --- 2. DICTIONARY (For UI & Smart Link Replacement) ---
         const uiDictionary = {
-            'en': { title: 'Visa Check', search: 'Search country...', links: 'Links', footer: 'Official Government Links Only', modalFooter: 'Opens in new tab', selectLang: 'Select Language' },
+            'en': { title: 'Visa Check', search: 'Search country...', links: 'Links', footer: 'Official Government Links', modalFooter: 'Opens in new tab', selectLang: 'Select Language' },
             'ne': { title: 'भिसा चेक', search: 'देश खोज्नुहोस्...', links: 'लिंकहरू', footer: 'सरकारी लिंक मात्र', modalFooter: 'नयाँ ट्याबमा खुल्छ', selectLang: 'भाषा छान्नुहोस्', replace: { 'Visa': 'भिसा', 'Status': 'स्थिति', 'Check': 'जाँच', 'Track': 'ट्र्याक' } },
             'hi': { title: 'वीज़ा चेक', search: 'देश खोजें...', links: 'लिंक', footer: 'केवल सरकारी लिंक', modalFooter: 'नए टैब में खुलता है', selectLang: 'भाषा चुनें', replace: { 'Visa': 'वीज़ा', 'Status': 'स्थिति', 'Check': 'जाँच', 'Track': 'ट्रैक' } },
             'ko': { title: '비자 확인', search: '국가 검색...', links: '링크', footer: '공식 정부 링크', modalFooter: '새 탭에서 열림', selectLang: '언어 선택', replace: { 'Visa': '비자', 'Status': '상태', 'Check': '확인', 'Track': '추적' } },
@@ -305,6 +289,7 @@
         const langModalEl = document.getElementById('language-modal');
         const langListEl = document.getElementById('language-list-container');
         const langSearchInput = document.getElementById('language-search');
+        const uiFooterNoteEl = document.getElementById('ui-footer-note'); // Get the element
 
         // --- 9. RENDER LOGIC ---
         function updateUI() {
@@ -312,7 +297,7 @@
             document.getElementById('ui-title').innerText = content.title;
             document.getElementById('ui-lang-btn').innerText = currentLang.toUpperCase().substring(0, 2);
             document.getElementById('country-search').placeholder = content.search;
-            document.getElementById('ui-footer-note').innerText = content.footer;
+            uiFooterNoteEl.innerText = content.footer; // Use the dictionary value for the note
             document.getElementById('ui-select-lang').innerText = content.selectLang;
             document.getElementById('ui-modal-footer').innerText = content.modalFooter;
             renderList(searchInput.value);
@@ -378,7 +363,7 @@
         function closeModal() { linkModalEl.classList.add('hidden'); }
         function openLanguageModal() { renderLanguageList(); langModalEl.classList.remove('hidden'); }
         function closeLanguageModal() { langModalEl.classList.add('hidden'); }
-        function openInfoModal() { document.getElementById('info-modal').classList.remove('hidden'); }
+        // The openInfoModal() function is no longer needed since the button and modal were removed.
 
         // Events
         searchInput.addEventListener('input', (e) => renderList(e.target.value));
