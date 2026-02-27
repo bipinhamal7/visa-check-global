@@ -1,0 +1,1436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Visa Check Global | Official Visa Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        :root { --primary-color: #0f172a; --secondary-color: #1e40af; --accent-color: #3b82f6; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif; background-color: #f8fafc; }
+        .header-gradient { background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%); }
+        .scrollable-content::-webkit-scrollbar { width: 4px; }
+        .scrollable-content::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 2px; }
+        .modal { transition: opacity 0.2s ease, visibility 0.2s ease; }
+        .modal.hidden { opacity: 0; visibility: hidden; }
+        .modal-content { transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        .modal.hidden .modal-content { transform: translateY(100%); }
+        .glass-effect { background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        .booking-gradient { background: linear-gradient(135deg, #059669 0%, #10b981 100%); }
+        .domestic-gradient { background: linear-gradient(135deg, #b45309 0%, #d97706 100%); }
+        .currency-gradient { background: linear-gradient(135deg, #7e22ce 0%, #a855f7 100%); }
+        .world-map-container { position: relative; width: 100%; height: 320px; overflow: hidden; border-radius: 16px; margin-bottom: 20px; background: linear-gradient(180deg, #010b1a 0%, #020e24 100%); border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 10px 40px rgba(0,0,0,0.4); }
+        #world-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
+        .world-flag { position: absolute; width: 18px; height: 13px; background-size: cover; border-radius: 2px; box-shadow: 0 0 6px rgba(0,190,255,0.5); opacity: 0.85; cursor: pointer; transition: 0.3s; z-index: 2; border: 1px solid rgba(255,255,255,0.15); }
+        .world-flag:hover { transform: scale(1.4); box-shadow: 0 0 14px rgba(0,190,255,0.9); opacity: 1; z-index: 10; }
+        .important-flag { width: 20px !important; height: 15px !important; box-shadow: 0 0 10px rgba(0,230,255,0.7) !important; border: 1px solid rgba(106,240,255,0.4) !important; }
+        #world-plane { position: absolute; width: 24px; height: 24px; z-index: 3; transition: left 1.8s cubic-bezier(0.4,0,0.2,1), top 1.8s cubic-bezier(0.4,0,0.2,1), transform 1.5s cubic-bezier(0.4,0,0.2,1); pointer-events: none; filter: drop-shadow(0 0 10px rgba(255,255,255,0.7)); }
+        #world-plane svg { fill: white; filter: drop-shadow(0 0 8px rgba(106,240,255,0.8)); }
+        #world-label { position: absolute; padding: 5px 12px; background: linear-gradient(135deg, rgba(4,20,45,0.98), rgba(8,30,65,0.98)); color: #6af0ff; font-size: 10px; border-radius: 12px; opacity: 0; transition: 0.4s; pointer-events: none; white-space: nowrap; border: 1px solid rgba(106,240,255,0.3); backdrop-filter: blur(10px); font-weight: 600; }
+        .lang-toggle { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2); backdrop-filter: blur(8px); padding: 4px; border-radius: 40px; display: flex; gap: 4px; }
+        .lang-option { padding: 6px 12px; border-radius: 30px; font-size: 0.75rem; font-weight: 600; cursor: pointer; transition: 0.2s; color: white; opacity: 0.8; }
+        .lang-option.active { background: white; color: #0f172a; opacity: 1; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .visa-country-card { background: white; border-radius: 12px; padding: 1rem; border: 1px solid #e5e7eb; margin-bottom: 1rem; }
+        .visa-country-card h4 { font-weight: 700; color: #1e40af; margin-bottom: 0.5rem; }
+        .visa-link { display: inline-block; background: #eff6ff; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; color: #1e40af; margin-right: 0.5rem; margin-bottom: 0.5rem; border: 1px solid #bfdbfe; }
+        .visa-link i { margin-right: 4px; }
+        .requirement-bullet { font-size: 0.75rem; color: #374151; margin-bottom: 0.25rem; display: flex; align-items: flex-start; gap: 6px; }
+        .currency-select { background-color: #f9fafb; border: 1px solid #e5e7eb; border-radius: 0.5rem; padding: 0.5rem; width: 100%; }
+        .loading-spinner { border: 2px solid #f3f3f3; border-top: 2px solid #a855f7; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; display: inline-block; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛂</text></svg>">
+</head>
+<body class="min-h-screen antialiased text-gray-800">
+
+<!-- Main App Container -->
+<div class="max-w-md mx-auto h-screen flex flex-col bg-white shadow-lg overflow-hidden relative">
+    <!-- Header with language toggle -->
+    <header class="header-gradient px-5 pt-2 pb-3 shadow-sm" style="padding-top: env(safe-area-inset-top);">
+        <div class="relative">
+            <div class="flex justify-between items-center mb-3">
+                <div class="flex items-center">
+                    <div class="w-8 h-8 bg-white/10 rounded-xl flex items-center justify-center mr-2 glass-effect">
+                        <i class="fas fa-passport text-white text-sm"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-base font-bold text-white tracking-tight" id="ui-title">Visa Check Global</h1>
+                        <p class="text-[0.7rem] text-blue-100/80 font-medium" id="ui-subtitle">Official Visa Portal</p>
+                    </div>
+                </div>
+                <div class="lang-toggle">
+                    <span onclick="setLanguage('en')" class="lang-option" id="lang-en">EN</span>
+                    <span onclick="setLanguage('ne')" class="lang-option" id="lang-ne">नेपाली</span>
+                </div>
+            </div>
+            <div class="relative">
+                <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                <input type="text" id="country-search" placeholder="Search country..." class="w-full pl-11 pr-4 py-2.5 rounded-xl border-none focus:ring-2 focus:ring-blue-500 shadow-sm bg-white text-gray-800 placeholder-gray-500 font-medium text-sm focus:outline-none">
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow p-4 scrollable-content overflow-y-auto">
+        <!-- International Flight Card -->
+        <div onclick="openFlightBookingModal()" class="mb-4 booking-gradient text-white p-4 rounded-xl cursor-pointer hover:opacity-90 transition-all duration-200 shadow-lg">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center mr-3"><i class="fas fa-plane-departure text-white"></i></div>
+                    <div><h3 class="font-bold text-sm" id="flight-title">International Flights</h3><p class="text-xs text-white/80" id="flight-subtitle">Fly Smart,Travel Safe</p></div>
+                </div>
+                <div class="bg-white/20 px-3 py-1 rounded-full"><span class="text-xs font-bold">BOOK NOW</span></div>
+            </div>
+            <div class="mt-3 flex overflow-x-auto space-x-3 pb-1">
+                <span class="text-xs bg-white/20 px-3 py-1 rounded-full whitespace-nowrap">✈️ Get Best Deals</span>
+                <span class="text-xs bg-white/20 px-3 py-1 rounded-full whitespace-nowrap">🛡️ 100% Trusted Service</span>
+                <span class="text-xs bg-white/20 px-3 py-1 rounded-full whitespace-nowrap">⭐ Instant Confirmation</span>
+            </div>
+        </div>
+
+        <!-- Domestic Flight Card (Nepal) -->
+        <div onclick="openDomesticFlightModal()" class="mb-4 domestic-gradient text-white p-4 rounded-xl cursor-pointer hover:opacity-90 transition-all duration-200 shadow-lg">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center mr-3"><i class="fas fa-plane text-white"></i></div>
+                    <div><h3 class="font-bold text-sm" id="domestic-title">Domestic Flights (Nepal)</h3><p class="text-xs text-white/80" id="domestic-subtitle">Fly within Nepal – Easy & Quick</p></div>
+                </div>
+                <div class="bg-white/20 px-3 py-1 rounded-full"><span class="text-xs font-bold">BOOK NOW</span></div>
+            </div>
+            <div class="mt-3 flex overflow-x-auto space-x-3 pb-1">
+                <span class="text-xs bg-white/20 px-3 py-1 rounded-full whitespace-nowrap">🇳🇵 KTM → Pokhara</span>
+                <span class="text-xs bg-white/20 px-3 py-1 rounded-full whitespace-nowrap">🇳🇵 KTM → Bharatpur</span>
+                <span class="text-xs bg-white/20 px-3 py-1 rounded-full whitespace-nowrap">🇳🇵 KTM → Biratnagar</span>
+            </div>
+        </div>
+
+        <!-- Working Visa Apply Card -->
+        <div onclick="openWorkingVisaModal()" class="mb-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white p-4 rounded-xl flex items-center justify-between cursor-pointer hover:from-blue-600 hover:to-blue-700 transition-all duration-200">
+            <div class="flex items-center">
+                <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center mr-3"><i class="fas fa-briefcase text-white"></i></div>
+                <div><h3 class="font-bold text-sm" id="working-visa-title">Working Visa Apply</h3><p class="text-xs text-blue-100/80" id="working-visa-subtitle">Seasonal & working holiday info</p></div>
+            </div>
+            <i class="fas fa-chevron-right text-white/70"></i>
+        </div>
+
+        <!-- NEW: Currency Exchange Card -->
+        <div onclick="openCurrencyModal()" class="mb-4 currency-gradient text-white p-4 rounded-xl flex items-center justify-between cursor-pointer hover:opacity-90 transition-all duration-200 shadow-lg">
+            <div class="flex items-center">
+                <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center mr-3"><i class="fas fa-coins text-white"></i></div>
+                <div><h3 class="font-bold text-sm" id="currency-title">Currency Exchange</h3><p class="text-xs text-white/80" id="currency-subtitle">Live rates & converter</p></div>
+            </div>
+            <i class="fas fa-chevron-right text-white/70"></i>
+        </div>
+
+        <!-- Country List Header -->
+        <div class="flex justify-between items-center mb-3">
+            <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide">Search Country for Visa Info</h2>
+            <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full" id="country-count">Search to see countries</span>
+        </div>
+
+        <!-- Country List Container (world map + prompt + results) -->
+        <div id="country-list-container" class="space-y-3 pb-16">
+            <!-- World Map (always in DOM) -->
+            <div id="world-container" class="world-map-container">
+                <canvas id="world-canvas"></canvas>
+                <div id="world-plane"><svg viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9L2 14v2l8-2.5V19l-2 1.5V22l3-1 3 1v-1.5L13 19v-5.5l8 2.5z"/></svg></div>
+                <div id="world-label"></div>
+            </div>
+            <!-- Search Prompt (always in DOM) -->
+            <div id="search-prompt" class="text-center py-8 search-transition">
+                <div class="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4"><i class="fas fa-search text-blue-500 text-xl"></i></div>
+                <h3 class="font-medium text-gray-700 mb-2">Search for a Country</h3>
+                <p class="text-sm text-gray-500 mb-4">Type a country name above to see visa information</p>
+                <div class="inline-flex flex-col items-center">
+                    <div class="flex space-x-2 mb-2"><span class="text-xs bg-gray-100 px-3 py-1 rounded-full">Korea</span><span class="text-xs bg-gray-100 px-3 py-1 rounded-full">USA</span><span class="text-xs bg-gray-100 px-3 py-1 rounded-full">UAE</span></div>
+                    <div class="flex space-x-2"><span class="text-xs bg-gray-100 px-3 py-1 rounded-full">Japan</span><span class="text-xs bg-gray-100 px-3 py-1 rounded-full">India</span><span class="text-xs bg-gray-100 px-3 py-1 rounded-full">UK</span></div>
+                </div>
+            </div>
+            <!-- Search Results (hidden initially) -->
+            <div id="search-results" class="space-y-3 hidden"></div>
+        </div>
+    </main>
+
+    <footer class="bg-white border-t border-gray-200 px-4 py-3 text-center">
+        <p class="text-xs text-gray-500 mb-1" id="ui-footer-note">Official Government Visa Portals</p>
+        <p class="text-xs font-semibold text-gray-700">© Visa Check Global 2026</p>
+    </footer>
+</div>
+
+<!-- International Flight Modal -->
+<div id="flight-booking-modal" class="modal hidden fixed inset-0 z-[80] bg-black/50 flex items-end justify-center">
+    <div class="modal-content w-full max-w-md bg-white h-[90vh] rounded-t-xl shadow-xl flex flex-col">
+        <div class="p-5 border-b border-gray-100">
+            <div class="flex justify-between items-center mb-4">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3"><i class="fas fa-plane text-green-600"></i></div>
+                    <div><h3 class="text-lg font-bold text-gray-800" id="flight-modal-title">International Flight Booking</h3><p class="text-xs text-gray-500" id="flight-modal-subtitle">Cheap & Trusted Tickets</p></div>
+                </div>
+                <button onclick="closeFlightBookingModal()" class="w-8 h-8 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center hover:bg-gray-200 transition"><i class="fas fa-times"></i></button>
+            </div>
+            <!-- Stats boxes -->
+            <div class="grid grid-cols-3 gap-2 mb-4">
+                <div class="bg-blue-50 p-2 rounded-lg text-center">
+                    <p class="text-xs text-gray-600" id="intl-stat1-title">Best Prices</p>
+                    <p class="font-bold text-green-600 text-sm" id="intl-stat1-value">✓ Guaranteed</p>
+                </div>
+                <div class="bg-green-50 p-2 rounded-lg text-center">
+                    <p class="text-xs text-gray-600" id="intl-stat2-title">Trust Score</p>
+                    <p class="font-bold text-blue-600 text-sm" id="intl-stat2-value">⭐ 4.9/5</p>
+                </div>
+                <div class="bg-purple-50 p-2 rounded-lg text-center">
+                    <p class="text-xs text-gray-600" id="intl-stat3-title">Support</p>
+                    <p class="font-bold text-purple-600 text-sm" id="intl-stat3-value">24/7</p>
+                </div>
+            </div>
+        </div>
+        <div class="flex-grow overflow-y-auto p-5 scrollable-content bg-gray-50/50 space-y-4">
+            <!-- Why book with us -->
+            <div class="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-4 rounded-xl">
+                <h4 class="font-bold text-sm mb-2" id="intl-why-heading">✈️ Why Book With Us?</h4>
+                <div class="space-y-2">
+                    <p class="text-xs flex items-center" id="intl-why-item1"><i class="fas fa-check-circle mr-2"></i> Affordable Fares, Premium Service</p>
+                    <p class="text-xs flex items-center" id="intl-why-item2"><i class="fas fa-check-circle mr-2"></i> Your Journey, Our Commitment</p>
+                    <p class="text-xs flex items-center" id="intl-why-item3"><i class="fas fa-check-circle mr-2"></i> Fly More, Pay Less - Always!</p>
+                </div>
+            </div>
+            <!-- Benefits grid -->
+            <div class="grid grid-cols-2 gap-3">
+                <div class="bg-white p-3 rounded-lg border border-gray-200">
+                    <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mb-2"><i class="fas fa-money-bill-wave text-blue-600"></i></div>
+                    <h5 class="font-semibold text-gray-800 text-xs" id="intl-benefit1-title">Best Price Promise</h5>
+                    <p class="text-xs text-gray-600 mt-1" id="intl-benefit1-desc">Lowest fares guaranteed</p>
+                </div>
+                <div class="bg-white p-3 rounded-lg border border-gray-200">
+                    <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center mb-2"><i class="fas fa-shield-alt text-green-600"></i></div>
+                    <h5 class="font-semibold text-gray-800 text-xs" id="intl-benefit2-title">100% Secure</h5>
+                    <p class="text-xs text-gray-600 mt-1" id="intl-benefit2-desc">SSL encrypted & secure payment</p>
+                </div>
+                <div class="bg-white p-3 rounded-lg border border-gray-200">
+                    <div class="w-8 h-8 bg-yellow-100 rounded-lg flex items-center justify-center mb-2"><i class="fas fa-clock text-yellow-600"></i></div>
+                    <h5 class="font-semibold text-gray-800 text-xs" id="intl-benefit3-title">Instant Booking</h5>
+                    <p class="text-xs text-gray-600 mt-1" id="intl-benefit3-desc">Confirmation within minutes</p>
+                </div>
+                <div class="bg-white p-3 rounded-lg border border-gray-200">
+                    <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center mb-2"><i class="fas fa-headset text-purple-600"></i></div>
+                    <h5 class="font-semibold text-gray-800 text-xs" id="intl-benefit4-title">24/7 Support</h5>
+                    <p class="text-xs text-gray-600 mt-1" id="intl-benefit4-desc">Dedicated customer care team</p>
+                </div>
+            </div>
+            <!-- Popular Routes -->
+            <div class="bg-white p-4 rounded-lg border border-gray-200">
+                <h4 class="font-semibold text-gray-800 text-sm flex items-center" id="intl-popular-heading"><i class="fas fa-route text-blue-600 mr-2"></i> Popular International Routes</h4>
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between p-2 hover:bg-gray-50 rounded">
+                        <div class="flex items-center"><span class="text-lg mr-2">🇳🇵</span><span class="text-sm font-medium">Kathmandu</span><i class="fas fa-arrow-right mx-2 text-gray-400"></i><span class="text-lg mr-2">🇰🇷</span><span class="text-sm font-medium">Seoul</span></div>
+                        <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Get Quote</span>
+                    </div>
+                    <div class="flex items-center justify-between p-2 hover:bg-gray-50 rounded">
+                        <div class="flex items-center"><span class="text-lg mr-2">🇳🇵</span><span class="text-sm font-medium">Kathmandu</span><i class="fas fa-arrow-right mx-2 text-gray-400"></i><span class="text-lg mr-2">🇦🇪</span><span class="text-sm font-medium">Dubai</span></div>
+                        <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Get Quote</span>
+                    </div>
+                    <div class="flex items-center justify-between p-2 hover:bg-gray-50 rounded">
+                        <div class="flex items-center"><span class="text-lg mr-2">🇳🇵</span><span class="text-sm font-medium">Kathmandu</span><i class="fas fa-arrow-right mx-2 text-gray-400"></i><span class="text-lg mr-2">🇺🇸</span><span class="text-sm font-medium">New York</span></div>
+                        <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Get Quote</span>
+                    </div>
+                </div>
+            </div>
+            <!-- How to Book -->
+            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                <h4 class="font-semibold text-yellow-800 text-sm mb-2" id="intl-how-heading"><i class="fas fa-info-circle text-yellow-600 mr-2"></i> How to Book</h4>
+                <ol class="text-xs text-yellow-700 space-y-1 pl-4">
+                    <li class="list-decimal" id="intl-how-item1">Click the "Book Now" button below</li>
+                    <li class="list-decimal" id="intl-how-item2">Visit our Facebook booking page</li>
+                    <li class="list-decimal" id="intl-how-item3">Send your travel details via Messenger</li>
+                    <li class="list-decimal" id="intl-how-item4">Get instant quotes & confirmation</li>
+                </ol>
+            </div>
+        </div>
+        <div class="p-4 bg-gray-50 border-t border-gray-200">
+            <a href="https://www.facebook.com/share/1DNq5m3tnP/?mibextid=wwXIfr" target="_blank" class="block w-full booking-gradient text-white text-center py-3 rounded-lg font-semibold text-sm flex items-center justify-center hover:opacity-90 transition shadow-lg"><i class="fas fa-plane mr-2"></i><span id="flight-book-now-btn">Book Your Flight Now</span></a>
+        </div>
+    </div>
+</div>
+
+<!-- Domestic Flight Modal -->
+<div id="domestic-flight-modal" class="modal hidden fixed inset-0 z-[85] bg-black/50 flex items-end justify-center">
+    <div class="modal-content w-full max-w-md bg-white h-[90vh] rounded-t-xl shadow-xl flex flex-col">
+        <div class="p-5 border-b border-gray-100">
+            <div class="flex justify-between items-center mb-4">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center mr-3"><i class="fas fa-plane text-orange-600"></i></div>
+                    <div><h3 class="text-lg font-bold text-gray-800" id="domestic-modal-title">Domestic Flights (Nepal)</h3><p class="text-xs text-gray-500" id="domestic-modal-subtitle">Quick & Easy Travel Within Nepal</p></div>
+                </div>
+                <button onclick="closeDomesticFlightModal()" class="w-8 h-8 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center hover:bg-gray-200 transition"><i class="fas fa-times"></i></button>
+            </div>
+            <!-- Stats boxes -->
+            <div class="grid grid-cols-3 gap-2 mb-4">
+                <div class="bg-orange-50 p-2 rounded-lg text-center">
+                    <p class="text-xs text-gray-600" id="dom-stat1-title">Daily Flights</p>
+                    <p class="font-bold text-orange-600 text-sm" id="dom-stat1-value">✓ Multiple</p>
+                </div>
+                <div class="bg-yellow-50 p-2 rounded-lg text-center">
+                    <p class="text-xs text-gray-600" id="dom-stat2-title">On Time</p>
+                    <p class="font-bold text-green-600 text-sm" id="dom-stat2-value">95%</p>
+                </div>
+                <div class="bg-red-50 p-2 rounded-lg text-center">
+                    <p class="text-xs text-gray-600" id="dom-stat3-title">Support</p>
+                    <p class="font-bold text-red-600 text-sm" id="dom-stat3-value">🇳🇵 Local</p>
+                </div>
+            </div>
+        </div>
+        <div class="flex-grow overflow-y-auto p-5 scrollable-content bg-gray-50/50 space-y-4">
+            <!-- Why fly domestic -->
+            <div class="bg-gradient-to-r from-orange-500 to-red-500 text-white p-4 rounded-xl">
+                <h4 class="font-bold text-sm mb-2" id="dom-why-heading">🇳🇵 Why Fly Domestic With Us?</h4>
+                <div class="space-y-2">
+                    <p class="text-xs flex items-center" id="dom-why-item1"><i class="fas fa-check-circle mr-2"></i> Trusted local airlines (Buddha, Yeti, Shree)</p>
+                    <p class="text-xs flex items-center" id="dom-why-item2"><i class="fas fa-check-circle mr-2"></i> Best fares for Nepali residents</p>
+                    <p class="text-xs flex items-center" id="dom-why-item3"><i class="fas fa-check-circle mr-2"></i> Easy booking via Facebook Messenger</p>
+                </div>
+            </div>
+            <!-- Popular Domestic Routes -->
+            <div class="bg-white p-4 rounded-lg border border-gray-200">
+                <h4 class="font-semibold text-gray-800 text-sm flex items-center" id="dom-popular-heading"><i class="fas fa-route text-orange-600 mr-2"></i> Popular Domestic Routes</h4>
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between p-2 hover:bg-gray-50 rounded">
+                        <div class="flex items-center"><span class="text-lg mr-2">🇳🇵</span><span class="text-sm font-medium">Kathmandu (KTM)</span><i class="fas fa-arrow-right mx-2 text-gray-400"></i><span class="text-lg mr-2">🇳🇵</span><span class="text-sm font-medium">Pokhara (PKR)</span></div>
+                        <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Get Fare</span>
+                    </div>
+                    <div class="flex items-center justify-between p-2 hover:bg-gray-50 rounded">
+                        <div class="flex items-center"><span class="text-lg mr-2">🇳🇵</span><span class="text-sm font-medium">Kathmandu (KTM)</span><i class="fas fa-arrow-right mx-2 text-gray-400"></i><span class="text-lg mr-2">🇳🇵</span><span class="text-sm font-medium">Bharatpur (BHR)</span></div>
+                        <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Get Fare</span>
+                    </div>
+                    <div class="flex items-center justify-between p-2 hover:bg-gray-50 rounded">
+                        <div class="flex items-center"><span class="text-lg mr-2">🇳🇵</span><span class="text-sm font-medium">Kathmandu (KTM)</span><i class="fas fa-arrow-right mx-2 text-gray-400"></i><span class="text-lg mr-2">🇳🇵</span><span class="text-sm font-medium">Biratnagar (BIR)</span></div>
+                        <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Get Fare</span>
+                    </div>
+                    <div class="flex items-center justify-between p-2 hover:bg-gray-50 rounded">
+                        <div class="flex items-center"><span class="text-lg mr-2">🇳🇵</span><span class="text-sm font-medium">Pokhara (PKR)</span><i class="fas fa-arrow-right mx-2 text-gray-400"></i><span class="text-lg mr-2">🇳🇵</span><span class="text-sm font-medium">Jomsom (JMO)</span></div>
+                        <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Get Fare</span>
+                    </div>
+                </div>
+            </div>
+            <!-- How to Book Domestic -->
+            <div class="bg-white p-4 rounded-lg border border-gray-200">
+                <h4 class="font-semibold text-gray-800 text-sm flex items-center" id="dom-how-heading"><i class="fas fa-info-circle text-blue-600 mr-2"></i> How to Book Domestic</h4>
+                <ol class="text-xs text-gray-700 space-y-1 pl-4">
+                    <li class="list-decimal" id="dom-how-item1">Click "Book Now" below</li>
+                    <li class="list-decimal" id="dom-how-item2">Message us your route & date</li>
+                    <li class="list-decimal" id="dom-how-item3">We'll confirm availability & price</li>
+                    <li class="list-decimal" id="dom-how-item4">Pay via Esewa / Bank transfer</li>
+                    <li class="list-decimal" id="dom-how-item5">E-ticket sent to your phone</li>
+                </ol>
+            </div>
+        </div>
+        <div class="p-4 bg-gray-50 border-t border-gray-200">
+            <a href="https://www.facebook.com/share/1DNq5m3tnP/?mibextid=wwXIfr" target="_blank" class="block w-full domestic-gradient text-white text-center py-3 rounded-lg font-semibold text-sm flex items-center justify-center hover:opacity-90 transition shadow-lg"><i class="fas fa-plane mr-2"></i><span id="domestic-book-btn">Book Domestic Flight Now</span></a>
+        </div>
+    </div>
+</div>
+
+<!-- NEW: Currency Exchange Modal (with all currencies) -->
+<div id="currency-modal" class="modal hidden fixed inset-0 z-[90] bg-black/50 flex items-end justify-center">
+    <div class="modal-content w-full max-w-md bg-white h-[85vh] rounded-t-xl shadow-xl flex flex-col">
+        <div class="p-5 border-b border-gray-100">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mr-3"><i class="fas fa-coins text-purple-600"></i></div>
+                    <div><h3 class="text-lg font-bold text-gray-800" id="currency-modal-title">Currency Exchange</h3><p class="text-xs text-gray-500" id="currency-modal-subtitle">Live rates via ExchangeRate-API</p></div>
+                </div>
+                <button onclick="closeCurrencyModal()" class="w-8 h-8 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center hover:bg-gray-200 transition"><i class="fas fa-times"></i></button>
+            </div>
+        </div>
+        <div class="flex-grow overflow-y-auto p-5 scrollable-content bg-gray-50/50">
+            <!-- Converter -->
+            <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+                <div class="mb-4">
+                    <label class="block text-xs font-medium text-gray-600 mb-1" id="currency-amount-label">Amount</label>
+                    <input type="number" id="currency-amount" value="1.00" step="0.01" min="0" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                </div>
+                <div class="grid grid-cols-2 gap-3 mb-4">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1" id="currency-from-label">From</label>
+                        <select id="currency-from" class="currency-select">
+                            <!-- options will be populated dynamically -->
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1" id="currency-to-label">To</label>
+                        <select id="currency-to" class="currency-select">
+                            <!-- options will be populated dynamically -->
+                        </select>
+                    </div>
+                </div>
+                <button onclick="convertCurrency()" class="w-full currency-gradient text-white py-3 rounded-lg font-semibold text-sm hover:opacity-90 transition shadow-md flex items-center justify-center" id="currency-convert-btn">
+                    <span id="convert-btn-text">Convert</span>
+                    <span id="convert-spinner" class="loading-spinner ml-2 hidden"></span>
+                </button>
+                <div class="mt-4 p-3 bg-purple-50 rounded-lg text-center">
+                    <p class="text-sm text-gray-600" id="currency-result">Loading rates...</p>
+                    <p class="text-xs text-gray-500 mt-1" id="currency-last-updated"></p>
+                </div>
+            </div>
+            <!-- Supported currencies note -->
+            <div class="mt-4 text-xs text-gray-500 text-center">
+                <i class="fas fa-info-circle mr-1"></i><span id="currency-api-note">Rates provided by ExchangeRate-API. Updated daily.</span>
+            </div>
+        </div>
+        <div class="p-4 bg-gray-50 border-t border-gray-200">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <div class="w-9 h-9 bg-purple-600 rounded-lg flex items-center justify-center mr-3"><i class="fas fa-sync-alt text-white"></i></div>
+                    <div><h4 class="font-bold text-gray-800 text-sm" id="currency-feedback-title">Live Data</h4><p class="text-xs text-gray-600" id="currency-feedback-subtitle">All currencies available</p></div>
+                </div>
+                <button onclick="refreshRates()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center transition shadow-sm"><i class="fas fa-sync-alt mr-2"></i><span id="currency-refresh-btn">Refresh</span></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Country Links Modal -->
+<div id="link-modal" class="modal hidden fixed inset-0 z-50 bg-black/50 flex items-end justify-center">
+    <div class="modal-content w-full max-w-md bg-white rounded-t-xl shadow-xl max-h-[85vh] flex flex-col">
+        <div class="p-5 border-b border-gray-100 flex justify-between items-center">
+            <h3 class="text-lg font-bold text-gray-800 flex items-center"><span id="modal-flag" class="mr-3 text-2xl"></span><span id="modal-title-text">Country</span></h3>
+            <button onclick="closeModal()" class="w-8 h-8 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center hover:bg-gray-200 transition"><i class="fas fa-times"></i></button>
+        </div>
+        <div id="modal-links-container" class="p-5 overflow-y-auto bg-gray-50/50 flex-grow"></div>
+        <div class="p-4 bg-blue-50 border-t border-gray-200">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center"><div class="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center mr-3"><i class="fas fa-headset text-white"></i></div><div><h4 class="font-bold text-gray-800 text-sm" id="modal-developer-title">Need Assistance?</h4><p class="text-xs text-gray-600" id="modal-developer-subtitle">Official visa support</p></div></div>
+                <a href="https://www.facebook.com/share/1DNq5m3tnP/?mibextid=wwXIfr" target="_blank" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center transition shadow-sm"><i class="fab fa-facebook mr-2"></i><span id="modal-follow-btn">Get Support</span></a>
+            </div>
+        </div>
+        <div class="p-3 bg-white text-center text-xs text-gray-400 border-t border-gray-100" id="ui-modal-footer">Official government visa portals. Opens in new tab.</div>
+    </div>
+</div>
+
+<!-- Working Visa Modal -->
+<div id="working-visa-modal" class="modal hidden fixed inset-0 z-[70] bg-black/50 flex items-end justify-center">
+    <div class="modal-content w-full max-w-md bg-white h-[85vh] rounded-t-xl shadow-xl flex flex-col">
+        <div class="p-5 border-b border-gray-100">
+            <div class="flex justify-between items-center">
+                <h3 class="text-lg font-bold text-gray-800" id="working-visa-modal-title">Working Visa Apply</h3>
+                <button onclick="closeWorkingVisaModal()" class="w-8 h-8 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center hover:bg-gray-200 transition"><i class="fas fa-times"></i></button>
+            </div>
+        </div>
+        <div id="working-visa-content" class="flex-grow overflow-y-auto p-5 scrollable-content bg-gray-50/50"></div>
+        <div class="p-4 bg-blue-50 border-t border-gray-200">
+            <div class="flex items-start"><i class="fas fa-info-circle text-blue-600 mt-0.5 mr-3"></i><div><h4 class="font-bold text-blue-800 text-sm mb-1" id="working-visa-note-title">Professional Note</h4><p class="text-blue-700 text-xs" id="working-visa-note-text">Eligibility varies by nationality. Always verify on official sites.</p></div></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ==================== GLOBAL STATE ====================
+    let currentLang = 'en';
+    let worldMapInitialized = false;
+    let animationInterval = null;
+    let currentModalCountry = null;
+    let exchangeRates = null; // cache rates
+    let lastRateFetch = 0;
+    const EXCHANGE_API_KEY = 'a2cc3ad0ecf569a45e7ed9ef'; // your API key
+    const EXCHANGE_API_URL = `https://v6.exchangerate-api.com/v6/${EXCHANGE_API_KEY}/latest/USD`;
+
+    // ==================== TRANSLATIONS ====================
+    const uiDictionary = {
+        'en': {
+            title: 'Visa Check Global', subtitle: 'Official Visa Portal', search: 'Search country...', links: 'Official Links',
+            footer: 'Official Government Visa Portals', modalFooter: 'Official government visa portals. Opens in new tab.',
+            noResults: 'No results found', followDeveloper: 'Need Assistance?', forUpdates: 'Official visa support', followNow: 'Get Support',
+            countryCount: 'Search to see countries',
+            workingVisaTitle: 'Working Visa Apply', workingVisaSubtitle: 'Seasonal & working holiday info', workingVisaModalTitle: 'Working Visa Apply',
+            workingNoteTitle: 'Professional Note', workingNoteText: 'Eligibility varies by nationality. Always verify on official sites.',
+            flightTitle: 'Fly Smart, Travel Safe', flightSubtitle: 'International Flights',
+            domesticTitle: 'Domestic Flights (Nepal)', domesticSubtitle: 'Fly within Nepal – Easy & Quick',
+            flightModalTitle: 'International Flight Booking', flightModalSubtitle: 'Cheap & Trusted Tickets',
+            intlStat1Title: 'Best Prices', intlStat1Value: '✓ Guaranteed',
+            intlStat2Title: 'Trust Score', intlStat2Value: '⭐ 4.9/5',
+            intlStat3Title: 'Support', intlStat3Value: '24/7',
+            intlWhyHeading: '✈️ Why Book With Us?',
+            intlWhyItem1: 'Affordable Fares, Premium Service',
+            intlWhyItem2: 'Your Journey, Our Commitment',
+            intlWhyItem3: 'Fly More, Pay Less - Always!',
+            intlBenefit1Title: 'Best Price Promise', intlBenefit1Desc: 'Lowest fares guaranteed',
+            intlBenefit2Title: '100% Secure', intlBenefit2Desc: 'SSL encrypted & secure payment',
+            intlBenefit3Title: 'Instant Booking', intlBenefit3Desc: 'Confirmation within minutes',
+            intlBenefit4Title: '24/7 Support', intlBenefit4Desc: 'Dedicated customer care team',
+            intlPopularHeading: 'Popular International Routes',
+            intlHowHeading: 'How to Book',
+            intlHowItem1: 'Click the "Book Now" button below',
+            intlHowItem2: 'Visit our Facebook booking page',
+            intlHowItem3: 'Send your travel details via Messenger',
+            intlHowItem4: 'Get instant quotes & confirmation',
+            flightBookNowBtn: 'Book Your Flight Now',
+            domesticModalTitle: 'Domestic Flights (Nepal)', domesticModalSubtitle: 'Quick & Easy Travel Within Nepal',
+            domStat1Title: 'Daily Flights', domStat1Value: '✓ Multiple',
+            domStat2Title: 'On Time', domStat2Value: '95%',
+            domStat3Title: 'Support', domStat3Value: '🇳🇵 Local',
+            domWhyHeading: '🇳🇵 Why Fly Domestic With Us?',
+            domWhyItem1: 'Trusted local airlines (Buddha, Yeti, Shree)',
+            domWhyItem2: 'Best fares for Nepali residents',
+            domWhyItem3: 'Easy booking via Facebook Messenger',
+            domPopularHeading: 'Popular Domestic Routes',
+            domHowHeading: 'How to Book Domestic',
+            domHowItem1: 'Click "Book Now" below',
+            domHowItem2: 'Message us your route & date',
+            domHowItem3: 'We\'ll confirm availability & price',
+            domHowItem4: 'Pay via Esewa / Bank transfer',
+            domHowItem5: 'E-ticket sent to your phone',
+            domesticBookBtn: 'Book Domestic Flight Now',
+            // Currency translations
+            currencyTitle: 'Currency Exchange',
+            currencySubtitle: 'Live rates & converter',
+            currencyModalTitle: 'Currency Exchange',
+            currencyModalSubtitle: 'Live rates via ExchangeRate-API',
+            currencyAmountLabel: 'Amount',
+            currencyFromLabel: 'From',
+            currencyToLabel: 'To',
+            currencyConvertBtn: 'Convert',
+            currencyApiNote: 'Rates provided by ExchangeRate-API. Updated daily.',
+            currencyFeedbackTitle: 'Live Data',
+            currencyFeedbackSubtitle: 'All currencies available',
+            currencyRefreshBtn: 'Refresh'
+        },
+        'ne': {
+            title: 'Visa Check Global', subtitle: 'आधिकारिक भिसा पोर्टल', search: 'देश खोज्नुहोस्...', links: 'आधिकारिक लिंकहरू',
+            footer: 'आधिकारिक सरकारी भिसा पोर्टल', modalFooter: 'आधिकारिक सरकारी भिसा पोर्टल। नयाँ ट्याबमा खुल्छ।',
+            noResults: 'कुनै परिणाम भेटिएन', followDeveloper: 'सहायता चाहिन्छ?', forUpdates: 'आधिकारिक भिसा समर्थन', followNow: 'समर्थन प्राप्त गर्नुहोस्',
+            countryCount: 'देश हेर्न खोज्नुहोस्',
+            workingVisaTitle: 'कार्य भिसा आवेदन', workingVisaSubtitle: 'मौसमी र कार्य अवकाश जानकारी', workingVisaModalTitle: 'कार्य भिसा आवेदन',
+            workingNoteTitle: 'व्यावसायिक नोट', workingNoteText: 'योग्यता राष्ट्रियता अनुसार फरक हुन्छ। सधैं आधिकारिक साइटहरूमा पुष्टि गर्नुहोस्।',
+            flightTitle: 'स्मार्ट उडान, सुरक्षित यात्रा', flightSubtitle: 'अन्तर्राष्ट्रिय उडानहरू',
+            domesticTitle: 'आन्तरिक उडान (नेपाल)', domesticSubtitle: 'नेपालभित्र सजिलो उडान',
+            flightModalTitle: 'अन्तर्राष्ट्रिय उडान बुकिंग', flightModalSubtitle: 'सस्तो र विश्वसनीय टिकटहरू',
+            intlStat1Title: 'उत्तम मूल्य', intlStat1Value: '✓ ग्यारेन्टी',
+            intlStat2Title: 'विश्वास स्कोर', intlStat2Value: '⭐ ४.९/५',
+            intlStat3Title: 'समर्थन', intlStat3Value: '२४/७',
+            intlWhyHeading: '✈️ हामीसँग किन बुक गर्ने?',
+            intlWhyItem1: 'किफायती भाडा, प्रिमियम सेवा',
+            intlWhyItem2: 'तपाईंको यात्रा, हाम्रो प्रतिबद्धता',
+            intlWhyItem3: 'धेरै उड्नुहोस्, कम तिर्नुहोस् - सधैं!',
+            intlBenefit1Title: 'उत्तम मूल्यको प्रतिज्ञा', intlBenefit1Desc: 'सबैभन्दा कम भाडा ग्यारेन्टी',
+            intlBenefit2Title: '१००% सुरक्षित', intlBenefit2Desc: 'SSL एन्क्रिप्टेड र सुरक्षित भुक्तानी',
+            intlBenefit3Title: 'तत्काल बुकिंग', intlBenefit3Desc: 'मिनेटमै पुष्टि',
+            intlBenefit4Title: '२४/७ समर्थन', intlBenefit4Desc: 'समर्पित ग्राहक सेवा टोली',
+            intlPopularHeading: 'लोकप्रिय अन्तर्राष्ट्रिय मार्गहरू',
+            intlHowHeading: 'कसरी बुक गर्ने',
+            intlHowItem1: 'तल "Book Now" बटन क्लिक गर्नुहोस्',
+            intlHowItem2: 'हाम्रो Facebook बुकिंग पृष्ठ भ्रमण गर्नुहोस्',
+            intlHowItem3: 'आफ्नो यात्रा विवरण Messenger मार्फत पठाउनुहोस्',
+            intlHowItem4: 'तत्काल उद्धरण र पुष्टि प्राप्त गर्नुहोस्',
+            flightBookNowBtn: 'आफ्नो उडान अहिले बुक गर्नुहोस्',
+            domesticModalTitle: 'आन्तरिक उडान (नेपाल)', domesticModalSubtitle: 'नेपालभित्र छिटो र सजिलो यात्रा',
+            domStat1Title: 'दैनिक उडानहरू', domStat1Value: '✓ धेरै',
+            domStat2Title: 'समयमा', domStat2Value: '९५%',
+            domStat3Title: 'समर्थन', domStat3Value: '🇳🇵 स्थानीय',
+            domWhyHeading: '🇳🇵 हामीसँग किन आन्तरिक उडान गर्ने?',
+            domWhyItem1: 'विश्वसनीय स्थानीय एयरलाइन्स (बुद्ध, यति, श्री)',
+            domWhyItem2: 'नेपाली बासिन्दाका लागि उत्तम भाडा',
+            domWhyItem3: 'फेसबुक मेसेन्जरबाट सजिलो बुकिंग',
+            domPopularHeading: 'लोकप्रिय आन्तरिक मार्गहरू',
+            domHowHeading: 'आन्तरिक कसरी बुक गर्ने',
+            domHowItem1: 'तल "Book Now" क्लिक गर्नुहोस्',
+            domHowItem2: 'हामीलाई आफ्नो मार्ग र मिति सन्देश पठाउनुहोस्',
+            domHowItem3: 'हामी उपलब्धता र मूल्य पुष्टि गर्नेछौं',
+            domHowItem4: 'Esewa / बैंक स्थानान्तरण मार्फत भुक्तानी गर्नुहोस्',
+            domHowItem5: 'ई-टिकट तपाईंको फोनमा पठाइनेछ',
+            domesticBookBtn: 'आन्तरिक उडान बुक गर्नुहोस्',
+            // Currency translations
+            currencyTitle: 'मुद्रा विनिमय',
+            currencySubtitle: 'वास्तविक दर र कन्भर्टर',
+            currencyModalTitle: 'मुद्रा विनिमय',
+            currencyModalSubtitle: 'ExchangeRate-API मार्फत वास्तविक दर',
+            currencyAmountLabel: 'रकम',
+            currencyFromLabel: 'बाट',
+            currencyToLabel: 'मा',
+            currencyConvertBtn: 'रूपान्तरण गर्नुहोस्',
+            currencyApiNote: 'ExchangeRate-API द्वारा प्रदान गरिएको दर। दैनिक अपडेट।',
+            currencyFeedbackTitle: 'वास्तविक डाटा',
+            currencyFeedbackSubtitle: 'सबै मुद्राहरू उपलब्ध',
+            currencyRefreshBtn: 'ताजा गर्नुहोस्'
+        }
+    };
+
+    function getTranslatedText(key) {
+        return uiDictionary[currentLang]?.[key] || uiDictionary['en'][key] || key;
+    }
+
+    function getFlagEmoji(code) {
+        return String.fromCodePoint(...code.toUpperCase().split('').map(c => 127397 + c.charCodeAt()));
+    }
+
+    function getCountryName(code) {
+        try {
+            return new Intl.DisplayNames([currentLang], { type: 'region' }).of(code) || code;
+        } catch {
+            return code;
+        }
+    }
+
+    // ==================== 110 COUNTRIES WITH LINKS (full list as original) ====================
+    const visaCountries = [
+        {code: 'KR', links: [{name: "Visa Status Check", url: "https://www.visa.go.kr/"}, {name: "K-ETA Portal", url: "https://www.k-eta.go.kr/"}, {name: "Work Permit Check", url: "https://www.work.go.kr/"}]},
+        {code: 'NP', links: [{name: "Visa Application Status", url: "https://www.immigration.gov.np/"}, {name: "Work Permit Portal", url: "https://www.doit.gov.np/"}]},
+        {code: 'IN', links: [{name: "e-Visa Portal", url: "https://indianvisaonline.gov.in/"}, {name: "Work Visa Check", url: "https://indianfrro.gov.in/"}]},
+        {code: 'JP', links: [{name: "e-Visa Portal", url: "https://www.evisa.mofa.go.jp/"}, {name: "Work Permit Status", url: "https://www.moj.go.jp/"}]},
+        {code: 'US', links: [{name: "CEAC Visa Status", url: "https://ceac.state.gov/"}, {name: "Work Visa Check", url: "https://www.uscis.gov/"}]},
+        {code: 'GB', links: [{name: "UK Visa Status", url: "https://www.gov.uk/check-uk-visa"}, {name: "Work Permit Portal", url: "https://www.gov.uk/check-work-visa"}]},
+        {code: 'AE', links: [{name: "ICP Smart Services", url: "https://smartservices.icp.gov.ae/"}, {name: "Work Permit Check", url: "https://www.mohre.gov.ae/"}]},
+        {code: 'SA', links: [{name: "Muqeem Portal", url: "https://muqeem.sa/"}, {name: "Work Visa Status", url: "https://www.mol.gov.sa/"}]},
+        {code: 'QA', links: [{name: "MOI Visa Inquiry", url: "https://portal.moi.gov.qa/"}, {name: "Work Permit Portal", url: "https://portal.moi.gov.qa/"}]},
+        {code: 'MY', links: [{name: "Malaysia Visa", url: "https://malaysiavisa.imi.gov.my/"}, {name: "Work Permit Status", url: "https://esd.imi.gov.my/"}]},
+        {code: 'AU', links: [{name: "VEVO Check", url: "https://online.immi.gov.au/"}, {name: "Work Visa Status", url: "https://immi.homeaffairs.gov.au/"}]},
+        {code: 'CA', links: [{name: "Visa Status Portal", url: "https://www.canada.ca/"}, {name: "Work Permit Check", url: "https://www.canada.ca/en/immigration-refugees-citizenship/services/work-canada.html"}]},
+        {code: 'CN', links: [{name: "Visa Application Center", url: "https://www.visaforchina.cn/"}, {name: "Work Permit Portal", url: "https://www.fmprc.gov.cn/"}]},
+        {code: 'TH', links: [{name: "Thai e-Visa", url: "https://thaievisa.go.th/"}, {name: "Work Permit Check", url: "https://www.doe.go.th/"}]},
+        {code: 'VN', links: [{name: "e-Visa Portal", url: "https://evisa.gov.vn/"}, {name: "Work Visa Status", url: "https://www.immigration.gov.vn/"}]},
+        {code: 'ID', links: [{name: "Indonesia e-Visa", url: "https://evisa.imigrasi.go.id/"}, {name: "Work Permit Portal", url: "https://www.imigrasi.go.id/"}]},
+        {code: 'PH', links: [{name: "Visa Application", url: "https://www.visa.gov.ph/"}, {name: "Work Visa Check", url: "https://www.immigration.gov.ph/"}]},
+        {code: 'KW', links: [{name: "Visa Inquiry", url: "https://rnt.moi.gov.kw/"}, {name: "Work Permit Status", url: "https://www.moi.gov.kw/"}]},
+        {code: 'OM', links: [{name: "e-Visa Tracking", url: "https://evisa.rop.gov.om/"}, {name: "Work Visa Portal", url: "https://www.rop.gov.om/"}]},
+        {code: 'BH', links: [{name: "e-Visa Portal", url: "https://www.evisa.gov.bh/"}, {name: "Work Permit Check", url: "https://www.lmr.gov.bh/"}]},
+        {code: 'TR', links: [{name: "Turkey e-Visa", url: "https://www.evisa.gov.tr/"}, {name: "Work Visa Status", url: "https://www.goc.gov.tr/"}]},
+        {code: 'IL', links: [{name: "Visa Services", url: "https://www.gov.il/"}, {name: "Work Permit Portal", url: "https://www.gov.il/"}]},
+        {code: 'NZ', links: [{name: "Immigration Portal", url: "https://www.immigration.govt.nz/"}, {name: "Work Visa Check", url: "https://www.immigration.govt.nz/"}]},
+        {code: 'SG', links: [{name: "ICA e-Services", url: "https://eservices.ica.gov.sg/"}, {name: "Work Permit Status", url: "https://www.mom.gov.sg/"}]},
+        {code: 'LK', links: [{name: "ETA Portal", url: "https://eta.gov.lk/"}, {name: "Work Visa Check", url: "https://www.immigration.gov.lk/"}]},
+        {code: 'PK', links: [{name: "Visa Tracking", url: "https://visa.nadra.gov.pk/"}, {name: "Work Permit Portal", url: "https://visa.nadra.gov.pk/"}]},
+        {code: 'BD', links: [{name: "Visa Portal", url: "https://www.visa.gov.bd/"}, {name: "Work Visa Status", url: "https://www.visa.gov.bd/"}]},
+        {code: 'KH', links: [{name: "e-Visa Portal", url: "https://www.evisa.gov.kh/"}, {name: "Work Permit Check", url: "https://www.evisa.gov.kh/"}]},
+        {code: 'LA', links: [{name: "e-Visa Portal", url: "https://laoevisa.gov.la/"}, {name: "Work Visa Portal", url: "https://laoevisa.gov.la/"}]},
+        {code: 'MM', links: [{name: "e-Visa Portal", url: "https://evisa.moip.gov.mm/"}, {name: "Work Permit Status", url: "https://evisa.moip.gov.mm/"}]},
+        {code: 'MV', links: [{name: "Work Permit Portal", url: "https://xpat.egov.mv/"}, {name: "Visa Status Check", url: "https://www.immigration.gov.mv/"}]},
+        {code: 'TW', links: [{name: "Visa Inquiry", url: "https://visawebapp.boca.gov.tw/"}, {name: "Work Permit Portal", url: "https://www.boca.gov.tw/"}]},
+        {code: 'HK', links: [{name: "Immigration Services", url: "https://www.gov.hk/"}, {name: "Work Visa Check", url: "https://www.immd.gov.hk/"}]},
+        {code: 'FR', links: [{name: "France-Visas", url: "https://france-visas.gouv.fr/"}, {name: "Work Permit Status", url: "https://www.immigration.interieur.gouv.fr/"}]},
+        {code: 'DE', links: [{name: "VIDEX System", url: "https://videx.diplo.de/"}, {name: "Work Visa Portal", url: "https://www.make-it-in-germany.com/"}]},
+        {code: 'IT', links: [{name: "Visa Application", url: "https://vistoperitalia.esteri.it/"}, {name: "Work Permit Check", url: "https://nullaostalavoro.dlci.interno.it/"}]},
+        {code: 'ES', links: [{name: "Public Administration", url: "https://sede.administracionespublicas.gob.es/"}, {name: "Work Visa Status", url: "https://extranjeros.inclusion.gob.es/"}]},
+        {code: 'PT', links: [{name: "Immigration Portal", url: "https://aima.gov.pt/"}, {name: "Work Permit Portal", url: "https://aima.gov.pt/"}]},
+        {code: 'PL', links: [{name: "Government Portal", url: "https://www.gov.pl/"}, {name: "Work Visa Check", url: "https://www.gov.pl/"}]},
+        {code: 'NL', links: [{name: "Netherlands Worldwide", url: "https://www.netherlandsworldwide.nl/"}, {name: "Work Permit Status", url: "https://ind.nl/"}]},
+        {code: 'RU', links: [{name: "e-Visa Portal", url: "https://evisa.kdmid.ru/"}, {name: "Work Visa Portal", url: "https://evisa.kdmid.ru/"}]},
+        {code: 'BR', links: [{name: "Visa Application", url: "https://formulario-mre.serpro.gov.br/"}, {name: "Work Permit Check", url: "https://www.gov.br/mre/"}]},
+        {code: 'MX', links: [{name: "Immigration Portal", url: "https://www.inm.gob.mx/"}, {name: "Work Visa Status", url: "https://www.inm.gob.mx/"}]},
+        {code: 'ZA', links: [{name: "Visa Tracking", url: "https://visa.vfsglobal.com/"}, {name: "Work Permit Portal", url: "https://www.dha.gov.za/"}]},
+        {code: 'EG', links: [{name: "Egypt e-Visa", url: "https://www.visa2egypt.gov.eg/"}, {name: "Work Visa Check", url: "https://www.visa2egypt.gov.eg/"}]},
+        {code: 'NG', links: [{name: "Immigration Portal", url: "https://portal.immigration.gov.ng/"}, {name: "Work Permit Status", url: "https://portal.immigration.gov.ng/"}]},
+        {code: 'KE', links: [{name: "eTA Portal", url: "https://www.etakenya.go.ke/"}, {name: "Work Visa Portal", url: "https://fns.immigration.go.ke/"}]},
+        {code: 'ET', links: [{name: "Ethiopia e-Visa", url: "https://www.evisa.gov.et/"}, {name: "Work Permit Check", url: "https://www.evisa.gov.et/"}]},
+        {code: 'SE', links: [{name: "Migration Agency", url: "https://www.migrationsverket.se/"}, {name: "Work Visa Status", url: "https://www.migrationsverket.se/"}]},
+        {code: 'CH', links: [{name: "SEM Immigration", url: "https://www.sem.admin.ch/"}, {name: "Work Permit Portal", url: "https://www.sem.admin.ch/"}]},
+        {code: 'NO', links: [{name: "UDI Portal", url: "https://www.udi.no/"}, {name: "Work Visa Check", url: "https://www.udi.no/"}]},
+        {code: 'FI', links: [{name: "Enter Finland", url: "https://enterfinland.fi/"}, {name: "Work Permit Status", url: "https://enterfinland.fi/"}]},
+        {code: 'DK', links: [{name: "New in Denmark", url: "https://www.nyidanmark.dk/"}, {name: "Work Visa Portal", url: "https://www.nyidanmark.dk/"}]},
+        {code: 'IE', links: [{name: "Immigration Service", url: "https://www.irishimmigration.ie/"}, {name: "Work Permit Check", url: "https://www.irishimmigration.ie/"}]},
+        {code: 'AL', links: [{name: "Albania e-Visa", url: "https://e-visa.al/"}, {name: "Work Visa Status", url: "https://e-visa.al/"}]},
+        {code: 'AM', links: [{name: "Armenia e-Visa", url: "https://evisa.mfa.am/"}, {name: "Work Permit Portal", url: "https://evisa.mfa.am/"}]},
+        {code: 'AT', links: [{name: "Foreign Ministry", url: "https://www.bmeia.gv.at/"}, {name: "Work Visa Check", url: "https://www.bmeia.gv.at/"}]},
+        {code: 'AZ', links: [{name: "Azerbaijan e-Visa", url: "https://evisa.gov.az/"}, {name: "Work Permit Status", url: "https://evisa.gov.az/"}]},
+        {code: 'BS', links: [{name: "Immigration Services", url: "https://www.immigration.gov.bs/"}, {name: "Work Visa Portal", url: "https://www.immigration.gov.bs/"}]},
+        {code: 'BB', links: [{name: "Immigration Department", url: "https://immigration.gov.bb/"}, {name: "Work Permit Check", url: "https://immigration.gov.bb/"}]},
+        {code: 'BE', links: [{name: "Visa on Web", url: "https://visaonweb.diplomatie.be/"}, {name: "Work Visa Status", url: "https://dofi.ibz.be/"}]},
+        {code: 'BZ', links: [{name: "Immigration Services", url: "https://immigration.gov.bz/"}, {name: "Work Permit Portal", url: "https://immigration.gov.bz/"}]},
+        {code: 'BJ', links: [{name: "Benin e-Visa", url: "https://evisa.gouv.bj/"}, {name: "Work Visa Check", url: "https://evisa.gouv.bj/"}]},
+        {code: 'BT', links: [{name: "Immigration Services", url: "https://www.doi.gov.bt/"}, {name: "Work Permit Status", url: "https://www.doi.gov.bt/"}]},
+        {code: 'BO', links: [{name: "Migration Services", url: "http://sistemas.migracion.gob.bo/"}, {name: "Work Visa Portal", url: "http://sistemas.migracion.gob.bo/"}]},
+        {code: 'BW', links: [{name: "Botswana e-Visa", url: "https://evisa.gov.bw/"}, {name: "Work Permit Check", url: "https://evisa.gov.bw/"}]},
+        {code: 'CM', links: [{name: "Cameroon e-Visa", url: "https://www.evisacam.cm/"}, {name: "Work Visa Status", url: "https://www.evisacam.cm/"}]},
+        {code: 'CL', links: [{name: "Foreigner Services", url: "https://tramites.extranjeria.gob.cl/"}, {name: "Work Permit Portal", url: "https://tramites.extranjeria.gob.cl/"}]},
+        {code: 'CO', links: [{name: "Migration Colombia", url: "https://apps.migracioncolombia.gov.co/"}, {name: "Work Visa Check", url: "https://apps.migracioncolombia.gov.co/"}]},
+        {code: 'CR', links: [{name: "Migration Services", url: "https://migracion.go.cr/"}, {name: "Work Permit Status", url: "https://migracion.go.cr/"}]},
+        {code: 'HR', links: [{name: "Foreign Ministry", url: "https://mvep.gov.hr/"}, {name: "Work Visa Portal", url: "https://mvep.gov.hr/"}]},
+        {code: 'CY', links: [{name: "Foreign Ministry", url: "http://www.mfa.gov.cy/"}, {name: "Work Permit Check", url: "http://www.mfa.gov.cy/"}]},
+        {code: 'CZ', links: [{name: "Foreigner Portal", url: "https://frs.gov.cz/"}, {name: "Work Visa Status", url: "https://frs.gov.cz/"}]},
+        {code: 'DJ', links: [{name: "Djibouti e-Visa", url: "https://www.evisa.gouv.dj/"}, {name: "Work Permit Portal", url: "https://www.evisa.gouv.dj/"}]},
+        {code: 'DO', links: [{name: "Migration eTicket", url: "https://eticket.migracion.gob.do/"}, {name: "Work Visa Check", url: "https://eticket.migracion.gob.do/"}]},
+        {code: 'EC', links: [{name: "Virtual Consulate", url: "https://www.consuladovirtual.gob.ec/"}, {name: "Work Permit Status", url: "https://www.consuladovirtual.gob.ec/"}]},
+        {code: 'SV', links: [{name: "Migration Services", url: "https://www.migracion.gob.sv/"}, {name: "Work Visa Portal", url: "https://www.migracion.gob.sv/"}]},
+        {code: 'EE', links: [{name: "Migration Portal", url: "https://vm.ee/"}, {name: "Work Permit Check", url: "https://vm.ee/"}]},
+        {code: 'FJ', links: [{name: "Immigration Services", url: "http://www.immigration.gov.fj/"}, {name: "Work Visa Status", url: "http://www.immigration.gov.fj/"}]},
+        {code: 'GA', links: [{name: "Gabon e-Visa", url: "https://evisa.dgdi.ga/"}, {name: "Work Permit Portal", url: "https://evisa.dgdi.ga/"}]},
+        {code: 'GE', links: [{name: "Georgia e-Visa", url: "https://www.evisa.gov.ge/"}, {name: "Work Visa Check", url: "https://www.evisa.gov.ge/"}]},
+        {code: 'GH', links: [{name: "GIS Portal", url: "https://home.gis.gov.gh/"}, {name: "Work Permit Status", url: "https://home.gis.gov.gh/"}]},
+        {code: 'GR', links: [{name: "Foreign Ministry", url: "https://www.mfa.gr/"}, {name: "Work Visa Portal", url: "https://www.mfa.gr/"}]},
+        {code: 'GN', links: [{name: "e-Visa Portal", url: "https://www.paf.gov.gn/"}, {name: "Work Permit Check", url: "https://www.paf.gov.gn/"}]},
+        {code: 'HU', links: [{name: "Immigration Office", url: "http://oif.gov.hu/"}, {name: "Work Visa Status", url: "http://oif.gov.hu/"}]},
+        {code: 'IR', links: [{name: "Iran e-Visa", url: "https://evisa.mfa.ir/"}, {name: "Work Permit Portal", url: "https://evisa.mfa.ir/"}]},
+        {code: 'CI', links: [{name: "Côte d'Ivoire e-Visa", url: "https://snedai.com/"}, {name: "Work Visa Check", url: "https://snedai.com/"}]},
+        {code: 'JM', links: [{name: "PICA Services", url: "https://www.pica.gov.jm/"}, {name: "Work Permit Status", url: "https://www.pica.gov.jm/"}]},
+        {code: 'JO', links: [{name: "MOI e-Services", url: "https://eservices.moi.gov.jo/"}, {name: "Work Visa Portal", url: "https://eservices.moi.gov.jo/"}]},
+        {code: 'KZ', links: [{name: "Migration Portal", url: "https://www.vmp.gov.kz/"}, {name: "Work Permit Check", url: "https://www.vmp.gov.kz/"}]},
+        {code: 'KG', links: [{name: "Kyrgyzstan e-Visa", url: "https://www.evisa.e-gov.kg/"}, {name: "Work Visa Status", url: "https://www.evisa.e-gov.kg/"}]},
+        {code: 'LV', links: [{name: "Migration Office", url: "https://www.pmlp.gov.lv/"}, {name: "Work Permit Portal", url: "https://www.pmlp.gov.lv/"}]},
+        {code: 'LB', links: [{name: "General Security", url: "https://www.general-security.gov.lb/"}, {name: "Work Visa Check", url: "https://www.general-security.gov.lb/"}]},
+        {code: 'LT', links: [{name: "Migration Department", url: "https://www.migracija.lt/"}, {name: "Work Permit Status", url: "https://www.migracija.lt/"}]},
+        {code: 'MG', links: [{name: "Madagascar e-Visa", url: "https://evisamada.gov.mg/"}, {name: "Work Visa Portal", url: "https://evisamada.gov.mg/"}]},
+        {code: 'MW', links: [{name: "Malawi e-Visa", url: "https://www.evisa.gov.mw/"}, {name: "Work Permit Check", url: "https://www.evisa.gov.mw/"}]},
+        {code: 'MT', links: [{name: "Identity Malta", url: "https://identita.gov.mt/"}, {name: "Work Visa Status", url: "https://identita.gov.mt/"}]},
+        {code: 'MD', links: [{name: "Moldova e-Visa", url: "https://evisa.gov.md/"}, {name: "Work Permit Portal", url: "https://evisa.gov.md/"}]},
+        {code: 'MN', links: [{name: "Mongolia e-Visa", url: "https://www.evisa.mn/"}, {name: "Work Visa Check", url: "https://www.evisa.mn/"}]},
+        {code: 'MA', links: [{name: "Access Morocco", url: "https://www.acces-maroc.ma/"}, {name: "Work Permit Status", url: "https://www.acces-maroc.ma/"}]},
+        {code: 'MZ', links: [{name: "Mozambique e-Visa", url: "https://evisa.gov.mz/"}, {name: "Work Visa Portal", url: "https://evisa.gov.mz/"}]},
+        {code: 'PA', links: [{name: "Migration Services", url: "https://www.migracion.gob.pa/"}, {name: "Work Permit Check", url: "https://www.migracion.gob.pa/"}]},
+        {code: 'PG', links: [{name: "Papua New Guinea e-Visa", url: "https://evisa.ica.gov.pg/"}, {name: "Work Visa Status", url: "https://evisa.ica.gov.pg/"}]},
+        {code: 'PY', links: [{name: "Migration Services", url: "https://www.migraciones.gov.py/"}, {name: "Work Permit Portal", url: "https://www.migraciones.gov.py/"}]},
+        {code: 'PE', links: [{name: "Migration Services", url: "https://www.migraciones.gob.pe/"}, {name: "Work Visa Check", url: "https://www.migraciones.gob.pe/"}]},
+        {code: 'RO', links: [{name: "Romania e-Visa", url: "http://evisa.mae.ro/"}, {name: "Work Permit Status", url: "http://evisa.mae.ro/"}]},
+        {code: 'RW', links: [{name: "Irembo Services", url: "https://irembo.gov.rw/"}, {name: "Work Visa Portal", url: "https://irembo.gov.rw/"}]},
+        {code: 'RS', links: [{name: "Foreign Ministry", url: "https://www.mfa.gov.rs/"}, {name: "Work Permit Check", url: "https://www.mfa.gov.rs/"}]},
+        {code: 'SK', links: [{name: "Foreign Ministry", url: "https://mzv.sk/"}, {name: "Work Visa Status", url: "https://mzv.sk/"}]},
+        {code: 'SI', links: [{name: "Government Portal", url: "https://www.gov.si/"}, {name: "Work Permit Portal", url: "https://www.gov.si/"}]},
+        {code: 'SR', links: [{name: "Suriname e-Visa", url: "https://suriname.vfsevisa.com/"}, {name: "Work Visa Check", url: "https://suriname.vfsevisa.com/"}]},
+        {code: 'TJ', links: [{name: "Tajikistan e-Visa", url: "https://www.evisa.tj/"}, {name: "Work Permit Status", url: "https://www.evisa.tj/"}]},
+        {code: 'TZ', links: [{name: "Tanzania e-Visa", url: "https://eservices.immigration.go.tz/"}, {name: "Work Visa Portal", url: "https://eservices.immigration.go.tz/"}]},
+        {code: 'TN', links: [{name: "Tunisia e-Visa", url: "https://visas.interieur.gov.tn/"}, {name: "Work Permit Check", url: "https://visas.interieur.gov.tn/"}]},
+        {code: 'UG', links: [{name: "Uganda Visa Portal", url: "https://visas.immigration.go.ug/"}, {name: "Work Visa Status", url: "https://visas.immigration.go.ug/"}]},
+        {code: 'UA', links: [{name: "Foreign Ministry", url: "https://mfa.gov.ua/"}, {name: "Work Permit Portal", url: "https://mfa.gov.ua/"}]},
+        {code: 'UY', links: [{name: "Government Portal", url: "https://www.gub.uy/"}, {name: "Work Visa Check", url: "https://www.gub.uy/"}]},
+        {code: 'UZ', links: [{name: "Uzbekistan e-Visa", url: "https://e-visa.gov.uz/"}, {name: "Work Permit Status", url: "https://e-visa.gov.uz/"}]},
+        {code: 'ZM', links: [{name: "Zambia e-Services", url: "https://eservices.zambiaimmigration.gov.zm/"}, {name: "Work Visa Portal", url: "https://eservices.zambiaimmigration.gov.zm/"}]},
+        {code: 'ZW', links: [{name: "Zimbabwe e-Visa", url: "https://www.evisa.gov.zw/"}, {name: "Work Permit Check", url: "https://www.evisa.gov.zw/"}]},
+        {code: 'AO', links: [{name: "Angola SME Visa", url: "http://www.smevisa.gov.ao/"}, {name: "Work Visa Status", url: "http://www.smevisa.gov.ao/"}]}
+    ];
+
+    // ==================== 40 WORKING VISA COUNTRIES (full list as original) ====================
+    const workingVisaCountries = [
+        { code: 'GB', nameEn: 'UNITED KINGDOM', nameNe: 'संयुक्त अधिराज्य',
+          linksEn: ['Seasonal Worker Visa Apply', 'Working Visa Apply'],
+          linksNe: ['मौसमी कामदार भिसा आवेदन', 'कार्य भिसा आवेदन'],
+          urls: ['https://www.gov.uk/seasonal-worker-visa/apply', 'https://www.gov.uk/browse/visas-immigration/work-visas'],
+          reqEn: ['Age: 18+ years', 'Certificate of sponsorship from UK employer', 'Minimum £1,270 in personal savings', 'Application fee: £319', 'Valid passport', 'Can work in horticulture (up to 6 months) or poultry (Oct-Dec)', 'No dependents allowed', 'Decision within 3 weeks'],
+          reqNe: ['उमेर: १८+ वर्ष', 'युके रोजगारदाताबाट प्रायोजन प्रमाणपत्र', 'न्यूनतम £१,२७० बचत', 'आवेदन शुल्क: £३१९', 'वैध राहदानी', 'बागवानी (६ महिना) वा कुखुरापालन (अक्टो-डिसे) मा काम', 'आश्रितहरूलाई अनुमति छैन', '३ हप्ताभित्र निर्णय'] },
+        { code: 'CA', nameEn: 'CANADA', nameNe: 'क्यानाडा',
+          linksEn: ['Seasonal Agricultural Worker Program', 'Working Holiday (IEC)'],
+          linksNe: ['मौसमी कृषि कामदार कार्यक्रम', 'कार्य अवकाश (आईईसी)'],
+          urls: ['https://www.canada.ca/en/immigration-refugees-citizenship/services/work-canada/permit/temporary/seasonal-agricultural-worker.html', 'https://www.canada.ca/en/immigration-refugees-citizenship/services/work-canada/iec.html'],
+          reqEn: ['SAWP: Age 18+, job offer, citizens of Mexico, Jamaica, etc.', 'IEC: Age 18-35 (varies), CAD 2,500 funds, health insurance, return airfare'],
+          reqNe: ['एसएडब्ल्यूपी: उमेर १८+, जागिर प्रस्ताव, मेक्सिको, जमैका आदिका नागरिक', 'आईईसी: उमेर १८-३५ (फरक हुन्छ), क्याड २,५०० कोष, स्वास्थ्य बीमा, फिर्ता हवाई भाडा'] },
+        { code: 'AU', nameEn: 'AUSTRALIA', nameNe: 'अष्ट्रेलिया',
+          linksEn: ['Work and Holiday (Subclass 462)', 'Online Application'],
+          linksNe: ['कार्य र अवकाश (उपवर्ग ४६२)', 'अनलाइन आवेदन'],
+          urls: ['https://immi.homeaffairs.gov.au/visas/getting-a-visa/visa-listing/work-holiday-462', 'https://online.immi.gov.au/lusc/login'],
+          reqEn: ['Age: 18-30 (35 for some)', 'AUD 5,000 funds', 'Valid passport from eligible country', 'Cost: AUD 635', 'Valid 12 months'],
+          reqNe: ['उमेर: १८-३० (केहीका लागि ३५)', 'AUD ५,००० कोष', 'योग्य देशको वैध राहदानी', 'लागत: AUD ६३५', '१२ महिना मान्य'] },
+        { code: 'NZ', nameEn: 'NEW ZEALAND', nameNe: 'न्यूजिल्याण्ड',
+          linksEn: ['Global Workforce Seasonal Visa', 'Working Holiday Visa'],
+          linksNe: ['वैश्विक कार्यबल मौसमी भिसा', 'कार्य अवकाश भिसा'],
+          urls: ['https://www.immigration.govt.nz/visas/global-workforce-seasonal-visa/', 'https://www.immigration.govt.nz/new-zealand-visas/apply-for-a-visa/about-visa/working-holiday-visa'],
+          reqEn: ['Seasonal: job offer, 3+ seasons experience', 'WH: Age 18-30 (35 some), NZD 4,200 funds, medical insurance'],
+          reqNe: ['मौसमी: जागिर प्रस्ताव, ३+ सिजन अनुभव', 'कार्य अवकाश: उमेर १८-३० (केही ३५), NZD ४,२०० कोष, चिकित्सा बीमा'] },
+        { code: 'DE', nameEn: 'GERMANY', nameNe: 'जर्मनी',
+          linksEn: ['Seasonal Work Info', 'ZAV Portal'],
+          linksNe: ['मौसमी काम जानकारी', 'ZAV पोर्टल'],
+          urls: ['https://www.auswaertiges-amt.de/en/visa-service/visum-english', 'https://www.arbeitsagentur.de/zav'],
+          reqEn: ['Job offer in agriculture/tourism', 'Valid passport, work contract, accommodation proof, health insurance'],
+          reqNe: ['कृषि/पर्यटनमा जागिर प्रस्ताव', 'वैध राहदानी, कार्य सम्झौता, आवास प्रमाण, स्वास्थ्य बीमा'] },
+        { code: 'FR', nameEn: 'FRANCE', nameNe: 'फ्रान्स',
+          linksEn: ['Seasonal Worker Visa', 'Work Authorization'],
+          linksNe: ['मौसमी कामदार भिसा', 'कार्य अधिकार'],
+          urls: ['https://france-visas.gouv.fr/en/salaried-employment', 'https://www.service-public.fr/particuliers/vosdroits/F21516'],
+          reqEn: ['Job offer 3-6 months/year', 'Valid passport, health insurance, clean record, accommodation'],
+          reqNe: ['जागिर प्रस्ताव ३-६ महिना/वर्ष', 'वैध राहदानी, स्वास्थ्य बीमा, सफ्ट रेकर्ड, आवास'] },
+        { code: 'IT', nameEn: 'ITALY', nameNe: 'इटाली',
+          linksEn: ['Decreto Flussi Portal', 'Information'],
+          linksNe: ['Decreto Flussi पोर्टल', 'जानकारी'],
+          urls: ['https://portaleservizi.dlci.interno.it/AliSportello/ali/home.htm', 'https://italiahello.it/en/articolo/the-decreto-flussi/'],
+          reqEn: ['Job offer from Italian employer', 'SPID credentials, Click Day system', 'Agricultural: Jan 2026, Tourism: Feb 2026'],
+          reqNe: ['इटालियन रोजगारदाताबाट जागिर प्रस्ताव', 'SPID प्रमाण, Click Day प्रणाली', 'कृषि: जनवरी २०२६, पर्यटन: फेब्रुअरी २०२६'] },
+        { code: 'ES', nameEn: 'SPAIN', nameNe: 'स्पेन',
+          linksEn: ['Seasonal Work Info', 'Work Visa Portal'],
+          linksNe: ['मौसमी काम जानकारी', 'कार्य भिसा पोर्टल'],
+          urls: ['https://www.exteriores.gob.es/Consulados/londres/en/ServiciosConsulares/Paginas/Consular/Visado-de-trabajo-estacional.aspx', 'https://sede.mptfp.gob.es/es/portal/index.html'],
+          reqEn: ['Job offer in agriculture/tourism', 'Work authorization from employer', 'Valid passport, clean record, medical certificate'],
+          reqNe: ['कृषि/पर्यटनमा जागिर प्रस्ताव', 'रोजगारदाताबाट कार्य अधिकार', 'वैध राहदानी, सफ्ट रेकर्ड, चिकित्सा प्रमाणपत्र'] },
+        { code: 'PT', nameEn: 'PORTUGAL', nameNe: 'पोर्चुगल',
+          linksEn: ['E8 Seasonal Visa', 'Info'],
+          linksNe: ['E8 मौसमी भिसा', 'जानकारी'],
+          urls: ['https://www.sef.pt/en/pages/homepage.aspx', 'https://www.globalcitizensolutions.com/portugal-e8-visa/'],
+          reqEn: ['Job offer for 90-270 days', 'Sectors: agriculture, tourism, hospitality', 'Processing 30 days'],
+          reqNe: ['९०-२७० दिनको जागिर प्रस्ताव', 'क्षेत्र: कृषि, पर्यटन, आतिथ्य', 'प्रक्रिया ३० दिन'] },
+        { code: 'SE', nameEn: 'SWEDEN', nameNe: 'स्विडेन',
+          linksEn: ['Seasonal Work Permit', 'Application Form'],
+          linksNe: ['मौसमी कार्य अनुमति', 'आवेदन फारम'],
+          urls: ['https://www.migrationsverket.se/en/you-want-to-apply/work/temporary-work-in-sweden/seasonal-workers.html', 'https://www.migrationsverket.se/download/18.2cd2e409193b84c506a34ff9/1743507425821/262011_Sasongsarbetstillstand_en.pdf'],
+          reqEn: ['Job offer, valid passport, health insurance, accommodation', 'Min SEK 13,000/month, max 6 months/12'],
+          reqNe: ['जागिर प्रस्ताव, वैध राहदानी, स्वास्थ्य बीमा, आवास', 'न्यूनतम SEK १३,०००/महिना, अधिकतम ६ महिना/१२'] },
+        { code: 'BE', nameEn: 'BELGIUM', nameNe: 'बेल्जियम',
+          linksEn: ['Seasonal Worker Permit', 'Single Permit'],
+          linksNe: ['मौसमी कामदार अनुमति', 'एकल अनुमति'],
+          urls: ['https://www.vlaanderen.be/en/working-enterprise-and-investment/working/employing-a-foreigner-in-flanders/categories/seasonal-workers', 'https://economie.fgov.be/en/themes/work/employment-foreigners'],
+          reqEn: ['Job offer in agriculture/horticulture/hospitality', 'Max 5 months/12 months, €150 fee, clean record'],
+          reqNe: ['कृषि/बागवानी/आतिथ्यमा जागिर प्रस्ताव', 'अधिकतम ५ महिना/१२ महिना, €१५० शुल्क, सफ्ट रेकर्ड'] },
+        { code: 'PL', nameEn: 'POLAND', nameNe: 'पोल्याण्ड',
+          linksEn: ['praca.gov.pl', 'Info'],
+          linksNe: ['praca.gov.pl', 'जानकारी'],
+          urls: ['https://praca.gov.pl/', 'https://sceaa.org.au/poland-work-permit-process-dec-2025/'],
+          reqEn: ['Job offer in seasonal sectors', 'Max 9 months/year, PLN 776/month, digital application'],
+          reqNe: ['मौसमी क्षेत्रमा जागिर प्रस्ताव', 'अधिकतम ९ महिना/वर्ष, PLN ७७६/महिना, डिजिटल आवेदन'] },
+        { code: 'CZ', nameEn: 'CZECH REPUBLIC', nameNe: 'चेक गणतन्त्र',
+          linksEn: ['Seasonal Employment', 'Ministry'],
+          linksNe: ['मौसमी रोजगार', 'मन्त्रालय'],
+          urls: ['https://mzv.gov.cz/jnp/en/information_for_aliens/long_stay_visa/seasonal_employment.mobi', 'https://www.mvcr.cz/mvcren/article/seasonal-employment.aspx'],
+          reqEn: ['Employment permit, job offer, accommodation proof', 'Criminal record extract, health insurance, up to 6 months'],
+          reqNe: ['रोजगार अनुमति, जागिर प्रस्ताव, आवास प्रमाण', 'अपराधिक रेकर्ड उद्धरण, स्वास्थ्य बीमा, ६ महिना सम्म'] },
+        { code: 'HU', nameEn: 'HUNGARY', nameNe: 'हंगेरी',
+          linksEn: ['Seasonal Work Permit', 'OIF'],
+          linksNe: ['मौसमी कार्य अनुमति', 'OIF'],
+          urls: ['https://oif.gov.hu/factsheets/residence-permit-for-seasonal-employment', 'https://oif.gov.hu/'],
+          reqEn: ['Plant production/forestry/animal breeding', 'Valid passport, health insurance, accommodation', '6 months extendable to 1 year'],
+          reqNe: ['बिरुवा उत्पादन/वन/पशु प्रजनन', 'वैध राहदानी, स्वास्थ्य बीमा, आवास', '६ महिना १ वर्षसम्म विस्तार'] },
+        { code: 'JP', nameEn: 'JAPAN', nameNe: 'जापान',
+          linksEn: ['Working Holiday Visa', 'Eligible Countries'],
+          linksNe: ['कार्य अवकाश भिसा', 'योग्य देशहरू'],
+          urls: ['https://www.mofa.go.jp/j_info/visit/visa/', 'https://www.mofa.go.jp/j_info/visit/visa/workingholiday.html'],
+          reqEn: ['Age 18-30 (25 for some), sufficient funds', 'Return ticket, health insurance, duration 6-12 months'],
+          reqNe: ['उमेर १८-३० (केहीका लागि २५), पर्याप्त कोष', 'फिर्ता टिकट, स्वास्थ्य बीमा, अवधि ६-१२ महिना'] },
+        { code: 'IE', nameEn: 'IRELAND', nameNe: 'आयरल्याण्ड',
+          linksEn: ['Working Holiday (US)', 'Employment Permits'],
+          linksNe: ['कार्य अवकाश (अमेरिका)', 'रोजगार अनुमति'],
+          urls: ['https://www.dfa.ie/irish-embassy/usa/our-services/visas/working-holiday-authorisation/', 'https://enterprise.gov.ie/en/What-We-Do/Workplace-and-Skills/Employment-Permits/'],
+          reqEn: ['Age 18+, student or recent grad, €1,400 funds', 'Medical insurance, €250 cost, 12 months'],
+          reqNe: ['उमेर १८+, विद्यार्थी वा हालै स्नातक, €१,४०० कोष', 'चिकित्सा बीमा, €२५० लागत, १२ महिना'] },
+        { code: 'SG', nameEn: 'SINGAPORE', nameNe: 'सिङ्गापुर',
+          linksEn: ['Work Holiday Programme', 'Apply'],
+          linksNe: ['कार्य अवकाश कार्यक्रम', 'आवेदन'],
+          urls: ['https://www.mom.gov.sg/passes-and-permits/work-holiday-programme', 'https://www.mom.gov.sg/passes-and-permits/work-holiday-programme/apply'],
+          reqEn: ['Age 18-25, undergrad or recent grad', 'S175 cost, valid 6 months, 2,000 applicants/year'],
+          reqNe: ['उमेर १८-२५, स्नातक वा हालै स्नातक', 'S१७५ लागत, ६ महिना मान्य, २,००० आवेदक/वर्ष'] },
+        { code: 'KR', nameEn: 'SOUTH KOREA', nameNe: 'दक्षिण कोरिया',
+          linksEn: ['Immigration', 'Info'],
+          linksNe: ['आप्रवासन', 'जानकारी'],
+          urls: ['https://www.immigration.go.kr/immigration_eng/index.do', 'https://www.korea.net/Government/Current-Affairs/Foreign-Affairs?affairId=1548'],
+          reqEn: ['Age 18-30, ₩3,000,000 savings, return airfare', 'Health insurance, max 18 months'],
+          reqNe: ['उमेर १८-३०, ₩३०,००,००० बचत, फिर्ता हवाई भाडा', 'स्वास्थ्य बीमा, अधिकतम १८ महिना'] },
+        { code: 'MT', nameEn: 'MALTA', nameNe: 'माल्टा',
+          linksEn: ['Single Permit', 'Permits'],
+          linksNe: ['एकल अनुमति', 'अनुमतिहरू'],
+          urls: ['https://identitymalta.com/single-permit/', 'https://identitymalta.com/permits-and-visas/'],
+          reqEn: ['Job offer in tourism/agriculture', 'Valid passport, health insurance, accommodation'],
+          reqNe: ['पर्यटन/कृषिमा जागिर प्रस्ताव', 'वैध राहदानी, स्वास्थ्य बीमा, आवास'] },
+        { code: 'NL', nameEn: 'NETHERLANDS', nameNe: 'नेदरल्याण्ड',
+          linksEn: ['Seasonal Work', 'Application'],
+          linksNe: ['मौसमी काम', 'आवेदन'],
+          urls: ['https://ind.nl/en/work/Pages/Seasonal-work-in-agriculture-or-tourism.aspx', 'https://ind.nl/en/forms/7663.pdf'],
+          reqEn: ['Job offer in agriculture/tourism', 'Employer applies for GVVA/TWV', 'Health insurance, accommodation'],
+          reqNe: ['कृषि/पर्यटनमा जागिर प्रस्ताव', 'रोजगारदाताले GVVA/TWV को लागि आवेदन दिन्छ', 'स्वास्थ्य बीमा, आवास'] },
+        // ============== 20 NEW COUNTRIES ADDED ==============
+        { code: 'AT', nameEn: 'AUSTRIA', nameNe: 'अष्ट्रिया',
+          linksEn: ['Seasonal Work Info', 'Work Permit Portal'],
+          linksNe: ['मौसमी काम जानकारी', 'कार्य अनुमति पोर्टल'],
+          urls: ['https://www.migration.gv.at/', 'https://www.ams.at/'],
+          reqEn: ['Job offer in tourism/agriculture', 'Health insurance', 'Accommodation proof', 'Valid passport', 'No criminal record'],
+          reqNe: ['पर्यटन/कृषिमा जागिर प्रस्ताव', 'स्वास्थ्य बीमा', 'आवास प्रमाण', 'वैध राहदानी', 'अपराधिक रेकर्ड नभएको'] },
+        { code: 'DK', nameEn: 'DENMARK', nameNe: 'डेनमार्क',
+          linksEn: ['Seasonal Work', 'Work in Denmark'],
+          linksNe: ['मौसमी काम', 'डेनमार्कमा काम'],
+          urls: ['https://www.nyidanmark.dk/', 'https://www.workindenmark.dk/'],
+          reqEn: ['Job offer in agriculture/forestry', 'Positive List', 'Health insurance', 'Accommodation', 'Valid passport'],
+          reqNe: ['कृषि/वनमा जागिर प्रस्ताव', 'सकारात्मक सूची', 'स्वास्थ्य बीमा', 'आवास', 'वैध राहदानी'] },
+        { code: 'FI', nameEn: 'FINLAND', nameNe: 'फिनल्याण्ड',
+          linksEn: ['Seasonal Work', 'Migri'],
+          linksNe: ['मौसमी काम', 'माइग्री'],
+          urls: ['https://migri.fi/', 'https://www.te-palvelut.fi/'],
+          reqEn: ['Job offer in agriculture/tourism', 'Valid passport', 'Health insurance', 'Accommodation', 'Clean record'],
+          reqNe: ['कृषि/पर्यटनमा जागिर प्रस्ताव', 'वैध राहदानी', 'स्वास्थ्य बीमा', 'आवास', 'सफा रेकर्ड'] },
+        { code: 'NO', nameEn: 'NORWAY', nameNe: 'नर्वे',
+          linksEn: ['UDI Seasonal Work', 'NAV'],
+          linksNe: ['यूडीआई मौसमी काम', 'एनएभी'],
+          urls: ['https://www.udi.no/', 'https://www.nav.no/'],
+          reqEn: ['Job offer in agriculture/fishing', 'Valid passport', 'Health insurance', 'Accommodation', 'Minimum wage'],
+          reqNe: ['कृषि/माछापालनमा जागिर प्रस्ताव', 'वैध राहदानी', 'स्वास्थ्य बीमा', 'आवास', 'न्यूनतम ज्याला'] },
+        { code: 'CH', nameEn: 'SWITZERLAND', nameNe: 'स्विजरल्याण्ड',
+          linksEn: ['SEM Immigration', 'Work Permit'],
+          linksNe: ['एसईएम आप्रवासन', 'कार्य अनुमति'],
+          urls: ['https://www.sem.admin.ch/', 'https://www.arbeit.swiss/'],
+          reqEn: ['Job offer in hospitality/agriculture', 'Quota restrictions', 'Valid passport', 'Health insurance', 'Accommodation'],
+          reqNe: ['आतिथ्य/कृषिमा जागिर प्रस्ताव', 'कोटा प्रतिबन्ध', 'वैध राहदानी', 'स्वास्थ्य बीमा', 'आवास'] },
+        { code: 'IS', nameEn: 'ICELAND', nameNe: 'आइसल्याण्ड',
+          linksEn: ['Directorate of Immigration', 'Seasonal Work'],
+          linksNe: ['अध्यागमन निर्देशनालय', 'मौसमी काम'],
+          urls: ['https://utl.is/', 'https://www.vinnumalastofnun.is/'],
+          reqEn: ['Job offer in tourism/agriculture', 'Valid passport', 'Health insurance', 'Accommodation', 'Clean record'],
+          reqNe: ['पर्यटन/कृषिमा जागिर प्रस्ताव', 'वैध राहदानी', 'स्वास्थ्य बीमा', 'आवास', 'सफा रेकर्ड'] },
+        { code: 'LU', nameEn: 'LUXEMBOURG', nameNe: 'लक्जेम्बर्ग',
+          linksEn: ['Guichet.lu', 'ADEM'],
+          linksNe: ['Guichet.lu', 'एडीईएम'],
+          urls: ['https://guichet.public.lu/', 'https://adem.public.lu/'],
+          reqEn: ['Job offer in construction/hospitality', 'Valid passport', 'Health insurance', 'Accommodation', 'Work contract'],
+          reqNe: ['निर्माण/आतिथ्यमा जागिर प्रस्ताव', 'वैध राहदानी', 'स्वास्थ्य बीमा', 'आवास', 'कार्य सम्झौता'] },
+        { code: 'EL', nameEn: 'GREECE', nameNe: 'ग्रीस',
+          linksEn: ['Migration Ministry', 'OAED'],
+          linksNe: ['अध्यागमन मन्त्रालय', 'OAED'],
+          urls: ['https://www.migration.gov.gr/', 'https://www.oaed.gr/'],
+          reqEn: ['Seasonal work in agriculture/tourism', 'Valid passport', 'Health insurance', 'Accommodation', 'Job contract'],
+          reqNe: ['कृषि/पर्यटनमा मौसमी काम', 'वैध राहदानी', 'स्वास्थ्य बीमा', 'आवास', 'रोजगार सम्झौता'] },
+        { code: 'SK', nameEn: 'SLOVAKIA', nameNe: 'स्लोभाकिया',
+          linksEn: ['Ministry of Interior', 'Work Permit'],
+          linksNe: ['गृह मन्त्रालय', 'कार्य अनुमति'],
+          urls: ['https://www.minv.sk/', 'https://www.upsvr.gov.sk/'],
+          reqEn: ['Job offer in industry/agriculture', 'Valid passport', 'Health insurance', 'Accommodation', 'Clean record'],
+          reqNe: ['उद्योग/कृषिमा जागिर प्रस्ताव', 'वैध राहदानी', 'स्वास्थ्य बीमा', 'आवास', 'सफा रेकर्ड'] },
+        { code: 'SI', nameEn: 'SLOVENIA', nameNe: 'स्लोभेनिया',
+          linksEn: ['Government Portal', 'Employment Service'],
+          linksNe: ['सरकारी पोर्टल', 'रोजगार सेवा'],
+          urls: ['https://www.gov.si/', 'https://www.ess.gov.si/'],
+          reqEn: ['Job offer in tourism/agriculture', 'Valid passport', 'Health insurance', 'Accommodation', 'Work permit'],
+          reqNe: ['पर्यटन/कृषिमा जागिर प्रस्ताव', 'वैध राहदानी', 'स्वास्थ्य बीमा', 'आवास', 'कार्य अनुमति'] },
+        { code: 'EE', nameEn: 'ESTONIA', nameNe: 'इस्टोनिया',
+          linksEn: ['Police and Border Guard', 'Töötukassa'],
+          linksNe: ['प्रहरी र सीमा रक्षक', 'Töötukassa'],
+          urls: ['https://www.politsei.ee/', 'https://www.tootukassa.ee/'],
+          reqEn: ['Job offer in agriculture/forestry', 'Valid passport', 'Health insurance', 'Accommodation', 'Clean record'],
+          reqNe: ['कृषि/वनमा जागिर प्रस्ताव', 'वैध राहदानी', 'स्वास्थ्य बीमा', 'आवास', 'सफा रेकर्ड'] },
+        { code: 'LV', nameEn: 'LATVIA', nameNe: 'लाट्भिया',
+          linksEn: ['PMLP', 'NVA'],
+          linksNe: ['पीएमएलपी', 'एनभीए'],
+          urls: ['https://www.pmlp.gov.lv/', 'https://www.nva.gov.lv/'],
+          reqEn: ['Job offer in agriculture/construction', 'Valid passport', 'Health insurance', 'Accommodation', 'Work contract'],
+          reqNe: ['कृषि/निर्माणमा जागिर प्रस्ताव', 'वैध राहदानी', 'स्वास्थ्य बीमा', 'आवास', 'रोजगार सम्झौता'] },
+        { code: 'LT', nameEn: 'LITHUANIA', nameNe: 'लिथुआनिया',
+          linksEn: ['Migration Department', 'UZT'],
+          linksNe: ['अध्यागमन विभाग', 'UZT'],
+          urls: ['https://www.migracija.lt/', 'https://www.uzt.lt/'],
+          reqEn: ['Job offer in agriculture/logistics', 'Valid passport', 'Health insurance', 'Accommodation', 'Clean record'],
+          reqNe: ['कृषि/रसदमा जागिर प्रस्ताव', 'वैध राहदानी', 'स्वास्थ्य बीमा', 'आवास', 'सफा रेकर्ड'] },
+        { code: 'CY', nameEn: 'CYPRUS', nameNe: 'साइप्रस',
+          linksEn: ['Ministry of Interior', 'Department of Labour'],
+          linksNe: ['गृह मन्त्रालय', 'श्रम विभाग'],
+          urls: ['http://www.moi.gov.cy/', 'http://www.dl.mlsi.gov.cy/'],
+          reqEn: ['Job offer in tourism/agriculture', 'Valid passport', 'Health insurance', 'Accommodation', 'Work permit'],
+          reqNe: ['पर्यटन/कृषिमा जागिर प्रस्ताव', 'वैध राहदानी', 'स्वास्थ्य बीमा', 'आवास', 'कार्य अनुमति'] },
+        { code: 'BG', nameEn: 'BULGARIA', nameNe: 'बुल्गेरिया',
+          linksEn: ['Ministry of Foreign Affairs', 'Employment Agency'],
+          linksNe: ['वैदेशिक मन्त्रालय', 'रोजगार एजेन्सी'],
+          urls: ['https://www.mfa.bg/', 'https://www.az.government.bg/'],
+          reqEn: ['Job offer in agriculture/tourism', 'Valid passport', 'Health insurance', 'Accommodation', 'Clean record'],
+          reqNe: ['कृषि/पर्यटनमा जागिर प्रस्ताव', 'वैध राहदानी', 'स्वास्थ्य बीमा', 'आवास', 'सफा रेकर्ड'] },
+        { code: 'RO', nameEn: 'ROMANIA', nameNe: 'रोमानिया',
+          linksEn: ['Ministry of Foreign Affairs', 'ANOFM'],
+          linksNe: ['वैदेशिक मन्त्रालय', 'ANOFM'],
+          urls: ['https://www.mae.ro/', 'https://www.anofm.ro/'],
+          reqEn: ['Job offer in construction/agriculture', 'Valid passport', 'Health insurance', 'Accommodation', 'Work contract'],
+          reqNe: ['निर्माण/कृषिमा जागिर प्रस्ताव', 'वैध राहदानी', 'स्वास्थ्य बीमा', 'आवास', 'रोजगार सम्झौता'] },
+        { code: 'HR', nameEn: 'CROATIA', nameNe: 'क्रोएसिया',
+          linksEn: ['Ministry of Interior', 'HZZ'],
+          linksNe: ['गृह मन्त्रालय', 'HZZ'],
+          urls: ['https://mup.gov.hr/', 'https://www.hzz.hr/'],
+          reqEn: ['Job offer in tourism/agriculture', 'Valid passport', 'Health insurance', 'Accommodation', 'Work permit'],
+          reqNe: ['पर्यटन/कृषिमा जागिर प्रस्ताव', 'वैध राहदानी', 'स्वास्थ्य बीमा', 'आवास', 'कार्य अनुमति'] },
+        { code: 'MY', nameEn: 'MALAYSIA', nameNe: 'मलेसिया',
+          linksEn: ['Immigration Department', 'Labour Department'],
+          linksNe: ['अध्यागमन विभाग', 'श्रम विभाग'],
+          urls: ['https://www.imi.gov.my/', 'https://www.mohr.gov.my/'],
+          reqEn: ['Job offer in plantation/manufacturing', 'Valid passport', 'Health check', 'Work permit', 'Accommodation'],
+          reqNe: ['वृक्षारोपण/उत्पादनमा जागिर प्रस्ताव', 'वैध राहदानी', 'स्वास्थ्य जाँच', 'कार्य अनुमति', 'आवास'] },
+        { code: 'TH', nameEn: 'THAILAND', nameNe: 'थाइल्याण्ड',
+          linksEn: ['Immigration Bureau', 'Department of Employment'],
+          linksNe: ['अध्यागमन ब्यूरो', 'रोजगार विभाग'],
+          urls: ['https://www.immigration.go.th/', 'https://www.doe.go.th/'],
+          reqEn: ['Job offer in teaching/tourism', 'Valid passport', 'Work permit', 'Health insurance', 'Clean record'],
+          reqNe: ['शिक्षण/पर्यटनमा जागिर प्रस्ताव', 'वैध राहदानी', 'कार्य अनुमति', 'स्वास्थ्य बीमा', 'सफा रेकर्ड'] },
+        { code: 'VN', nameEn: 'VIETNAM', nameNe: 'भियतनाम',
+          linksEn: ['Immigration Department', 'Ministry of Labour'],
+          linksNe: ['अध्यागमन विभाग', 'श्रम मन्त्रालय'],
+          urls: ['https://www.immigration.gov.vn/', 'https://www.molisa.gov.vn/'],
+          reqEn: ['Job offer in teaching/tech', 'Valid passport', 'Work permit', 'Health check', 'Clean record'],
+          reqNe: ['शिक्षण/प्रविधिमा जागिर प्रस्ताव', 'वैध राहदानी', 'कार्य अनुमति', 'स्वास्थ्य जाँच', 'सफा रेकर्ड'] }
+    ];
+
+    // ==================== WORLD MAP INITIALIZATION ====================
+    function initWorldMap() {
+        if (worldMapInitialized) return;
+        const container = document.getElementById('world-container');
+        const canvas = document.getElementById('world-canvas');
+        const plane = document.getElementById('world-plane');
+        const label = document.getElementById('world-label');
+        if (!container || !canvas || !plane || !label) return;
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // Network nodes
+        const nodes = [];
+        for (let i = 0; i < 150; i++) {
+            nodes.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                vx: (Math.random() - 0.5) * 0.3,
+                vy: (Math.random() - 0.5) * 0.3,
+                pulse: Math.random() * 2 * Math.PI,
+                size: 1.5 + Math.random()
+            });
+        }
+
+        function animateNetwork() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // Draw connections
+            for (let i = 0; i < nodes.length; i++) {
+                for (let j = i + 1; j < nodes.length; j++) {
+                    const dx = nodes[i].x - nodes[j].x;
+                    const dy = nodes[i].y - nodes[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 110) {
+                        const opacity = (1 - dist / 110) * 0.2;
+                        ctx.strokeStyle = `rgba(90, 210, 255, ${opacity})`;
+                        ctx.lineWidth = 0.5 + opacity * 1.2;
+                        ctx.beginPath();
+                        ctx.moveTo(nodes[i].x, nodes[i].y);
+                        ctx.lineTo(nodes[j].x, nodes[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+            // Draw nodes
+            for (let n of nodes) {
+                n.x += n.vx;
+                n.y += n.vy;
+                n.pulse += 0.02;
+                if (n.x < 0 || n.x > canvas.width) n.vx *= -1;
+                if (n.y < 0 || n.y > canvas.height) n.vy *= -1;
+                const pulseVal = 0.35 + Math.sin(n.pulse) * 0.25;
+                const grad = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, n.size * 2.5);
+                grad.addColorStop(0, `rgba(120, 230, 255, ${pulseVal})`);
+                grad.addColorStop(0.7, `rgba(60, 180, 255, ${pulseVal * 0.25})`);
+                grad.addColorStop(1, `rgba(30, 100, 200, 0)`);
+                ctx.fillStyle = grad;
+                ctx.beginPath();
+                ctx.arc(n.x, n.y, n.size, 0, 2 * Math.PI);
+                ctx.fill();
+            }
+            requestAnimationFrame(animateNetwork);
+        }
+        animateNetwork();
+
+        // Remove old flags
+        const oldFlags = container.querySelectorAll('.world-flag');
+        oldFlags.forEach(f => f.remove());
+
+        // Place flags for all 110 countries
+        const allCountryCodes = visaCountries.map(c => c.code.toLowerCase());
+        const important = ['kr', 'np', 'in', 'jp', 'us', 'gb', 'ae', 'sa', 'au', 'ca'];
+
+        const gridSize = 25;
+        const padding = 5;
+        const gridCols = Math.floor((canvas.width - 40) / gridSize);
+        const gridRows = Math.floor((canvas.height - 60) / gridSize);
+        const positions = [];
+        for (let r = 0; r < gridRows; r++) {
+            for (let c = 0; c < gridCols; c++) {
+                positions.push({
+                    x: 20 + c * gridSize + Math.random() * padding,
+                    y: 40 + r * gridSize + Math.random() * padding
+                });
+            }
+        }
+        positions.sort(() => Math.random() - 0.5);
+
+        allCountryCodes.slice(0, positions.length).forEach((code, idx) => {
+            const pos = positions[idx];
+            const flag = document.createElement('div');
+            flag.className = 'world-flag' + (important.includes(code) ? ' important-flag' : '');
+            flag.dataset.code = code;
+            flag.dataset.name = getCountryName(code.toUpperCase());
+            flag.style.backgroundImage = `url(https://flagcdn.com/w40/${code}.png)`;
+            flag.style.left = pos.x + 'px';
+            flag.style.top = pos.y + 'px';
+            flag.title = flag.dataset.name;
+            flag.addEventListener('click', () => {
+                document.getElementById('country-search').value = flag.dataset.name;
+                renderList(flag.dataset.name);
+            });
+            container.appendChild(flag);
+        });
+
+        // Plane animation
+        const flags = container.querySelectorAll('.world-flag');
+        if (flags.length === 0) return;
+
+        let planeX = canvas.width / 2, planeY = canvas.height / 2, currentTarget = 0, isFlying = false;
+        plane.style.left = planeX + 'px';
+        plane.style.top = planeY + 'px';
+
+        function angle(x1, y1, x2, y2) {
+            return Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+        }
+
+        function flyToNext() {
+            if (flags.length === 0 || isFlying) return;
+            isFlying = true;
+            currentTarget = (currentTarget + 1) % flags.length;
+            const target = flags[currentTarget];
+            const rect = target.getBoundingClientRect();
+            const contRect = container.getBoundingClientRect();
+            const tx = rect.left - contRect.left + rect.width / 2;
+            const ty = rect.top - contRect.top + rect.height / 2;
+            const startX = planeX, startY = planeY;
+            const ang = angle(startX, startY, tx, ty) + 90;
+            plane.style.transform = `rotate(${ang}deg)`;
+
+            const startTime = Date.now();
+            const duration = 1800;
+
+            function step() {
+                const elapsed = Date.now() - startTime;
+                const prog = Math.min(elapsed / duration, 1);
+                const ease = prog < 0.5 ? 2 * prog * prog : 1 - Math.pow(-2 * prog + 2, 2) / 2;
+                planeX = startX + (tx - startX) * ease;
+                planeY = startY + (ty - startY) * ease;
+                plane.style.left = planeX + 'px';
+                plane.style.top = planeY + 'px';
+                if (prog < 1) {
+                    requestAnimationFrame(step);
+                } else {
+                    label.textContent = target.dataset.name;
+                    label.style.left = (tx + 16) + 'px';
+                    label.style.top = (ty - 28) + 'px';
+                    label.style.opacity = '1';
+                    setTimeout(() => {
+                        label.style.opacity = '0';
+                        isFlying = false;
+                    }, 1500);
+                }
+            }
+            step();
+        }
+
+        if (animationInterval) clearInterval(animationInterval);
+        setTimeout(flyToNext, 1000);
+        animationInterval = setInterval(flyToNext, 2500);
+
+        worldMapInitialized = true;
+    }
+
+    // ==================== RENDER SEARCH RESULTS ====================
+    function renderList(filter) {
+        const term = filter.trim().toLowerCase();
+        const world = document.getElementById('world-container');
+        const prompt = document.getElementById('search-prompt');
+        const resultsDiv = document.getElementById('search-results');
+
+        if (!term) {
+            world.style.display = 'block';
+            prompt.style.display = 'block';
+            resultsDiv.style.display = 'none';
+            resultsDiv.innerHTML = '';
+            document.getElementById('country-count').innerText = getTranslatedText('countryCount');
+            if (!worldMapInitialized) initWorldMap();
+            return;
+        }
+
+        world.style.display = 'none';
+        prompt.style.display = 'none';
+        resultsDiv.style.display = 'block';
+
+        const processed = visaCountries.map(c => ({
+            ...c,
+            displayName: getCountryName(c.code),
+            displayFlag: getFlagEmoji(c.code)
+        })).filter(c => c.displayName.toLowerCase().includes(term))
+          .sort((a, b) => a.displayName.localeCompare(b.displayName));
+
+        if (processed.length === 0) {
+            resultsDiv.innerHTML = `<div class="text-center py-10"><i class="fas fa-search text-gray-300 text-3xl mb-3"></i><p class="text-gray-500 text-sm">${getTranslatedText('noResults')}</p></div>`;
+            document.getElementById('country-count').innerText = '0 Countries';
+            return;
+        }
+
+        document.getElementById('country-count').innerText = processed.length + ' Countries';
+
+        resultsDiv.innerHTML = processed.map(c => `
+            <div onclick="openLinkModal('${c.code}')" class="bg-white p-4 rounded-lg border border-gray-200 flex items-center justify-between cursor-pointer hover:border-blue-300 hover:shadow-sm transition-all duration-200">
+                <div class="flex items-center">
+                    <span class="text-2xl mr-3">${c.displayFlag}</span>
+                    <div class="flex-grow">
+                        <h3 class="font-semibold text-gray-800 text-sm">${c.displayName}</h3>
+                        <p class="text-xs text-gray-500">${c.links.length} ${getTranslatedText('links')}</p>
+                    </div>
+                </div>
+                <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
+            </div>
+        `).join('');
+    }
+
+    // ==================== MODAL FUNCTIONS ====================
+    function openFlightBookingModal() { document.getElementById('flight-booking-modal').classList.remove('hidden'); }
+    function closeFlightBookingModal() { document.getElementById('flight-booking-modal').classList.add('hidden'); }
+    function openDomesticFlightModal() { document.getElementById('domestic-flight-modal').classList.remove('hidden'); }
+    function closeDomesticFlightModal() { document.getElementById('domestic-flight-modal').classList.add('hidden'); }
+
+    function openWorkingVisaModal() {
+        updateWorkingVisaContent();
+        document.getElementById('working-visa-modal').classList.remove('hidden');
+    }
+    function closeWorkingVisaModal() { document.getElementById('working-visa-modal').classList.add('hidden'); }
+
+    function openLinkModal(code) {
+        currentModalCountry = code;
+        const country = visaCountries.find(c => c.code === code);
+        if (!country) return;
+        document.getElementById('modal-flag').innerText = getFlagEmoji(code);
+        document.getElementById('modal-title-text').innerText = getCountryName(code);
+        const linksHtml = '<h4 class="font-semibold text-gray-700 mb-3 text-sm uppercase tracking-wide">' + getTranslatedText('links') + ':</h4><div class="space-y-2">' +
+            country.links.map(l => `<a href="${l.url}" target="_blank" class="block w-full p-3 bg-white rounded-lg border border-gray-200 flex justify-between items-center hover:bg-blue-50 hover:border-blue-300 transition-all duration-200"><span class="font-medium text-gray-800 text-sm">${l.name}</span><i class="fas fa-external-link-alt text-gray-400 text-xs"></i></a>`).join('') +
+            '</div>';
+        document.getElementById('modal-links-container').innerHTML = linksHtml;
+        document.getElementById('link-modal').classList.remove('hidden');
+    }
+    function closeModal() { document.getElementById('link-modal').classList.add('hidden'); currentModalCountry = null; }
+
+    // ==================== CURRENCY FUNCTIONS ====================
+    async function fetchExchangeRates() {
+        const now = Date.now();
+        if (exchangeRates && (now - lastRateFetch) < 3600000) return exchangeRates; // cache 1 hour
+
+        const resultEl = document.getElementById('currency-result');
+        const spinner = document.getElementById('convert-spinner');
+        const btnText = document.getElementById('convert-btn-text');
+
+        try {
+            if (spinner) spinner.classList.remove('hidden');
+            if (btnText) btnText.innerText = 'Loading...';
+
+            const response = await fetch(EXCHANGE_API_URL);
+            const data = await response.json();
+            if (data.result === 'success') {
+                exchangeRates = data.conversion_rates;
+                lastRateFetch = now;
+                document.getElementById('currency-last-updated').innerText = `Last updated: ${new Date().toLocaleString()}`;
+                populateCurrencyDropdowns();
+            } else {
+                throw new Error('API error');
+            }
+        } catch (e) {
+            console.warn('Failed to fetch rates, using fallback.');
+            // Fallback rates (common currencies)
+            exchangeRates = {
+                USD:1, EUR:0.92, GBP:0.79, JPY:151.5, NPR:133.45, AUD:1.52,
+                CAD:1.36, CHF:0.91, CNY:7.24, AED:3.67, INR:83.2, KRW:1350,
+                SGD:1.35, MYR:4.75, THB:36.5, VND:25400, PHP:56.5, IDR:16200
+            };
+            document.getElementById('currency-last-updated').innerText = 'Using offline fallback rates.';
+            populateCurrencyDropdowns();
+        } finally {
+            if (spinner) spinner.classList.add('hidden');
+            if (btnText) btnText.innerText = getTranslatedText('currencyConvertBtn');
+        }
+        return exchangeRates;
+    }
+
+    function populateCurrencyDropdowns() {
+        if (!exchangeRates) return;
+        const fromSelect = document.getElementById('currency-from');
+        const toSelect = document.getElementById('currency-to');
+        const currencies = Object.keys(exchangeRates).sort();
+
+        // Save current selections
+        const oldFrom = fromSelect.value;
+        const oldTo = toSelect.value;
+
+        fromSelect.innerHTML = '';
+        toSelect.innerHTML = '';
+
+        currencies.forEach(code => {
+            const option = document.createElement('option');
+            option.value = code;
+            option.textContent = `${code} - ${getCurrencyName(code)}`;
+            fromSelect.appendChild(option.cloneNode(true));
+            toSelect.appendChild(option);
+        });
+
+        // Restore selections if possible, else set defaults
+        if (currencies.includes(oldFrom)) fromSelect.value = oldFrom;
+        else if (currencies.includes('USD')) fromSelect.value = 'USD';
+        else fromSelect.value = currencies[0];
+
+        if (currencies.includes(oldTo)) toSelect.value = oldTo;
+        else if (currencies.includes('NPR')) toSelect.value = 'NPR';
+        else toSelect.value = currencies[1] || currencies[0];
+    }
+
+    function getCurrencyName(code) {
+        const names = {
+            USD: 'US Dollar', EUR: 'Euro', GBP: 'British Pound', JPY: 'Japanese Yen',
+            NPR: 'Nepalese Rupee', AUD: 'Australian Dollar', CAD: 'Canadian Dollar',
+            CHF: 'Swiss Franc', CNY: 'Chinese Yuan', AED: 'UAE Dirham', INR: 'Indian Rupee',
+            KRW: 'South Korean Won', SGD: 'Singapore Dollar', MYR: 'Malaysian Ringgit',
+            THB: 'Thai Baht', VND: 'Vietnamese Dong', PHP: 'Philippine Peso',
+            IDR: 'Indonesian Rupiah', PKR: 'Pakistani Rupee', LKR: 'Sri Lankan Rupee',
+            BDT: 'Bangladeshi Taka', MVR: 'Maldivian Rufiyaa', KHR: 'Cambodian Riel',
+            LAK: 'Lao Kip', MMK: 'Myanmar Kyat', BRL: 'Brazilian Real', MXN: 'Mexican Peso',
+            ZAR: 'South African Rand', RUB: 'Russian Ruble', TRY: 'Turkish Lira',
+            SAR: 'Saudi Riyal', QAR: 'Qatari Riyal', KWD: 'Kuwaiti Dinar', BHD: 'Bahraini Dinar',
+            OMR: 'Omani Rial', JOD: 'Jordanian Dinar', ILS: 'Israeli Shekel'
+        };
+        return names[code] || code;
+    }
+
+    async function convertCurrency() {
+        const rates = await fetchExchangeRates();
+        const amount = parseFloat(document.getElementById('currency-amount').value) || 1;
+        const from = document.getElementById('currency-from').value;
+        const to = document.getElementById('currency-to').value;
+        if (!rates[from] || !rates[to]) return;
+        const inUSD = amount / rates[from];
+        const result = inUSD * rates[to];
+        document.getElementById('currency-result').innerText = `${amount} ${from} = ${result.toFixed(2)} ${to}`;
+    }
+
+    async function refreshRates() {
+        exchangeRates = null;
+        await fetchExchangeRates();
+        convertCurrency();
+    }
+
+    async function openCurrencyModal() {
+        document.getElementById('currency-modal').classList.remove('hidden');
+        await fetchExchangeRates();
+        convertCurrency();
+    }
+    function closeCurrencyModal() { document.getElementById('currency-modal').classList.add('hidden'); }
+
+    // ==================== WORKING VISA CONTENT ====================
+    function updateWorkingVisaContent() {
+        let html = '';
+        workingVisaCountries.forEach(c => {
+            const name = currentLang === 'ne' ? c.nameNe : c.nameEn;
+            const links = currentLang === 'ne' ? c.linksNe : c.linksEn;
+            const reqs = currentLang === 'ne' ? c.reqNe : c.reqEn;
+            html += `<div class="visa-country-card"><h4 class="text-base">${name}</h4><div class="mb-2">`;
+            links.forEach((link, idx) => {
+                html += `<a href="${c.urls[idx]}" target="_blank" class="visa-link"><i class="fas fa-external-link-alt"></i> ${link}</a>`;
+            });
+            html += `</div><div class="mt-2 border-t pt-2 border-gray-200">`;
+            reqs.forEach(r => html += `<div class="requirement-bullet"><i class="fas fa-circle text-blue-400 text-[6px] mt-1.5"></i><span>${r}</span></div>`);
+            html += `</div></div>`;
+        });
+        document.getElementById('working-visa-content').innerHTML = html;
+        document.getElementById('working-visa-note-title').innerText = getTranslatedText('workingNoteTitle');
+        document.getElementById('working-visa-note-text').innerText = getTranslatedText('workingNoteText');
+    }
+
+    // ==================== LANGUAGE SWITCH ====================
+    function setLanguage(code) {
+        if (code === currentLang) return;
+        currentLang = code;
+
+        // Update all UI text
+        document.getElementById('ui-title').innerText = getTranslatedText('title');
+        document.getElementById('ui-subtitle').innerText = getTranslatedText('subtitle');
+        document.getElementById('country-search').placeholder = getTranslatedText('search');
+        document.getElementById('ui-footer-note').innerText = getTranslatedText('footer');
+        document.getElementById('ui-modal-footer').innerText = getTranslatedText('modalFooter');
+        document.getElementById('flight-title').innerText = getTranslatedText('flightTitle');
+        document.getElementById('flight-subtitle').innerText = getTranslatedText('flightSubtitle');
+        document.getElementById('domestic-title').innerText = getTranslatedText('domesticTitle');
+        document.getElementById('domestic-subtitle').innerText = getTranslatedText('domesticSubtitle');
+        document.getElementById('working-visa-title').innerText = getTranslatedText('workingVisaTitle');
+        document.getElementById('working-visa-subtitle').innerText = getTranslatedText('workingVisaSubtitle');
+        document.getElementById('working-visa-modal-title').innerText = getTranslatedText('workingVisaModalTitle');
+        document.getElementById('modal-developer-title').innerText = getTranslatedText('followDeveloper');
+        document.getElementById('modal-developer-subtitle').innerText = getTranslatedText('forUpdates');
+        document.getElementById('modal-follow-btn').innerText = getTranslatedText('followNow');
+        document.getElementById('lang-en').classList.toggle('active', code === 'en');
+        document.getElementById('lang-ne').classList.toggle('active', code === 'ne');
+        document.getElementById('country-count').innerText = getTranslatedText('countryCount');
+
+        // International modal texts
+        document.getElementById('flight-modal-title').innerText = getTranslatedText('flightModalTitle');
+        document.getElementById('flight-modal-subtitle').innerText = getTranslatedText('flightModalSubtitle');
+        document.getElementById('intl-stat1-title').innerText = getTranslatedText('intlStat1Title');
+        document.getElementById('intl-stat1-value').innerText = getTranslatedText('intlStat1Value');
+        document.getElementById('intl-stat2-title').innerText = getTranslatedText('intlStat2Title');
+        document.getElementById('intl-stat2-value').innerText = getTranslatedText('intlStat2Value');
+        document.getElementById('intl-stat3-title').innerText = getTranslatedText('intlStat3Title');
+        document.getElementById('intl-stat3-value').innerText = getTranslatedText('intlStat3Value');
+        document.getElementById('intl-why-heading').innerText = getTranslatedText('intlWhyHeading');
+        document.getElementById('intl-why-item1').innerHTML = '<i class="fas fa-check-circle mr-2"></i> ' + getTranslatedText('intlWhyItem1');
+        document.getElementById('intl-why-item2').innerHTML = '<i class="fas fa-check-circle mr-2"></i> ' + getTranslatedText('intlWhyItem2');
+        document.getElementById('intl-why-item3').innerHTML = '<i class="fas fa-check-circle mr-2"></i> ' + getTranslatedText('intlWhyItem3');
+        document.getElementById('intl-benefit1-title').innerText = getTranslatedText('intlBenefit1Title');
+        document.getElementById('intl-benefit1-desc').innerText = getTranslatedText('intlBenefit1Desc');
+        document.getElementById('intl-benefit2-title').innerText = getTranslatedText('intlBenefit2Title');
+        document.getElementById('intl-benefit2-desc').innerText = getTranslatedText('intlBenefit2Desc');
+        document.getElementById('intl-benefit3-title').innerText = getTranslatedText('intlBenefit3Title');
+        document.getElementById('intl-benefit3-desc').innerText = getTranslatedText('intlBenefit3Desc');
+        document.getElementById('intl-benefit4-title').innerText = getTranslatedText('intlBenefit4Title');
+        document.getElementById('intl-benefit4-desc').innerText = getTranslatedText('intlBenefit4Desc');
+        document.getElementById('intl-popular-heading').innerHTML = '<i class="fas fa-route text-blue-600 mr-2"></i> ' + getTranslatedText('intlPopularHeading');
+        document.getElementById('intl-how-heading').innerHTML = '<i class="fas fa-info-circle text-yellow-600 mr-2"></i> ' + getTranslatedText('intlHowHeading');
+        document.getElementById('intl-how-item1').innerText = getTranslatedText('intlHowItem1');
+        document.getElementById('intl-how-item2').innerText = getTranslatedText('intlHowItem2');
+        document.getElementById('intl-how-item3').innerText = getTranslatedText('intlHowItem3');
+        document.getElementById('intl-how-item4').innerText = getTranslatedText('intlHowItem4');
+        document.getElementById('flight-book-now-btn').innerText = getTranslatedText('flightBookNowBtn');
+
+        // Domestic modal texts
+        document.getElementById('domestic-modal-title').innerText = getTranslatedText('domesticModalTitle');
+        document.getElementById('domestic-modal-subtitle').innerText = getTranslatedText('domesticModalSubtitle');
+        document.getElementById('dom-stat1-title').innerText = getTranslatedText('domStat1Title');
+        document.getElementById('dom-stat1-value').innerText = getTranslatedText('domStat1Value');
+        document.getElementById('dom-stat2-title').innerText = getTranslatedText('domStat2Title');
+        document.getElementById('dom-stat2-value').innerText = getTranslatedText('domStat2Value');
+        document.getElementById('dom-stat3-title').innerText = getTranslatedText('domStat3Title');
+        document.getElementById('dom-stat3-value').innerText = getTranslatedText('domStat3Value');
+        document.getElementById('dom-why-heading').innerText = getTranslatedText('domWhyHeading');
+        document.getElementById('dom-why-item1').innerHTML = '<i class="fas fa-check-circle mr-2"></i> ' + getTranslatedText('domWhyItem1');
+        document.getElementById('dom-why-item2').innerHTML = '<i class="fas fa-check-circle mr-2"></i> ' + getTranslatedText('domWhyItem2');
+        document.getElementById('dom-why-item3').innerHTML = '<i class="fas fa-check-circle mr-2"></i> ' + getTranslatedText('domWhyItem3');
+        document.getElementById('dom-popular-heading').innerHTML = '<i class="fas fa-route text-orange-600 mr-2"></i> ' + getTranslatedText('domPopularHeading');
+        document.getElementById('dom-how-heading').innerHTML = '<i class="fas fa-info-circle text-blue-600 mr-2"></i> ' + getTranslatedText('domHowHeading');
+        document.getElementById('dom-how-item1').innerText = getTranslatedText('domHowItem1');
+        document.getElementById('dom-how-item2').innerText = getTranslatedText('domHowItem2');
+        document.getElementById('dom-how-item3').innerText = getTranslatedText('domHowItem3');
+        document.getElementById('dom-how-item4').innerText = getTranslatedText('domHowItem4');
+        document.getElementById('dom-how-item5').innerText = getTranslatedText('domHowItem5');
+        document.getElementById('domestic-book-btn').innerText = getTranslatedText('domesticBookBtn');
+
+        // Currency card & modal texts
+        document.getElementById('currency-title').innerText = getTranslatedText('currencyTitle');
+        document.getElementById('currency-subtitle').innerText = getTranslatedText('currencySubtitle');
+        document.getElementById('currency-modal-title').innerText = getTranslatedText('currencyModalTitle');
+        document.getElementById('currency-modal-subtitle').innerText = getTranslatedText('currencyModalSubtitle');
+        document.getElementById('currency-amount-label').innerText = getTranslatedText('currencyAmountLabel');
+        document.getElementById('currency-from-label').innerText = getTranslatedText('currencyFromLabel');
+        document.getElementById('currency-to-label').innerText = getTranslatedText('currencyToLabel');
+        document.getElementById('currency-convert-btn').innerText = getTranslatedText('currencyConvertBtn');
+        document.getElementById('currency-api-note').innerText = getTranslatedText('currencyApiNote');
+        document.getElementById('currency-feedback-title').innerText = getTranslatedText('currencyFeedbackTitle');
+        document.getElementById('currency-feedback-subtitle').innerText = getTranslatedText('currencyFeedbackSubtitle');
+        document.getElementById('currency-refresh-btn').innerText = getTranslatedText('currencyRefreshBtn');
+
+        // Update working visa modal if open
+        if (!document.getElementById('working-visa-modal').classList.contains('hidden')) updateWorkingVisaContent();
+
+        // Recreate world map with new country names
+        worldMapInitialized = false;
+        const world = document.getElementById('world-container');
+        if (world.style.display !== 'none') {
+            const container = world;
+            const flags = container.querySelectorAll('.world-flag');
+            flags.forEach(f => f.remove());
+            initWorldMap();
+        }
+    }
+
+    // ==================== EVENT LISTENERS & INIT ====================
+    document.getElementById('country-search').addEventListener('input', (e) => renderList(e.target.value));
+    document.getElementById('link-modal').addEventListener('click', (e) => { if (e.target === document.getElementById('link-modal')) closeModal(); });
+    document.getElementById('flight-booking-modal').addEventListener('click', (e) => { if (e.target === document.getElementById('flight-booking-modal')) closeFlightBookingModal(); });
+    document.getElementById('domestic-flight-modal').addEventListener('click', (e) => { if (e.target === document.getElementById('domestic-flight-modal')) closeDomesticFlightModal(); });
+    document.getElementById('working-visa-modal').addEventListener('click', (e) => { if (e.target === document.getElementById('working-visa-modal')) closeWorkingVisaModal(); });
+    document.getElementById('currency-modal').addEventListener('click', (e) => { if (e.target === document.getElementById('currency-modal')) closeCurrencyModal(); });
+
+    // Initialize language and map
+    setLanguage('en');
+    window.addEventListener('load', () => setTimeout(initWorldMap, 200));
+</script>
+</body>
+</html> i want to add photos of the country 110 phots i give you manually this photos this photos show behind the four botton this photos change each 3 second
